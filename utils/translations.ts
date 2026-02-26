@@ -239,7 +239,9 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Current plan",
     got_it: "Got it",
     redirecting_stripe: "Redirecting to Stripe...",
-    upgrade_btn_total: "Upgrade to Plus · {price}"
+    upgrade_btn_total: "Upgrade to Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Blacklisted"
   },
   da: {
     scan_btn: "Scan produktfoto",

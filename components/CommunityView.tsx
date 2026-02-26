@@ -1,8 +1,8 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser';
 import React, { useState } from 'react';
 import {
     Dimensions,
-    Linking,
     Platform,
     ScrollView,
     StyleSheet,
@@ -66,7 +66,7 @@ const CommunityView: React.FC<CommunityViewProps> = ({ onClose }) => {
             setCustomAmount('');
 
             // Just linking for demo
-            Linking.openURL('https://stripe.com').catch(err => console.error("Couldn't load page", err));
+            WebBrowser.openBrowserAsync('https://stripe.com').catch(err => console.error("Couldn't load page", err));
         }, 1500);
     };
 

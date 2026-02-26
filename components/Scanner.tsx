@@ -1,11 +1,11 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
     Easing,
-    Image,
-    Linking,
     Platform,
     StyleSheet,
     Text,
@@ -260,11 +260,11 @@ const Scanner: React.FC<ScannerProps> = ({
                     <Text style={styles.footerDesc}>{t('tagline_desc')}</Text>
                     <Text style={styles.thanksLabel}>{t('special_thanks')}</Text>
                     <TouchableOpacity
-                        onPress={() => Linking.openURL('https://plasticchange.dk/')}
+                        onPress={() => WebBrowser.openBrowserAsync('https://plasticchange.dk/')}
                         style={styles.thanksLink}
                     >
                         <Image
-                            source={{ uri: 'https://plasticchange.dk/wp-content/uploads/2019/05/logo_plastic_change.svg' }}
+                            source={require('../assets/images/logo_plastic_change.svg')}
                             style={styles.thanksLogo}
                         />
                     </TouchableOpacity>

@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser';
 import React, { useState } from 'react';
 import {
     ActivityIndicator,
     Dimensions,
-    Linking,
     Modal,
     Platform,
     ScrollView,
@@ -81,7 +81,7 @@ export function UpgradeDialog({
             if (error) {
                 console.error(error);
             } else if (data?.url) {
-                Linking.openURL(data.url);
+                await WebBrowser.openBrowserAsync(data.url);
             }
         } catch (err) {
             console.error(err);

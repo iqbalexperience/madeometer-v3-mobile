@@ -1,12 +1,12 @@
 import { getBlacklist, getWhitelist, removeFromBlacklist, removeFromWhitelist, saveFeedback } from '@/lib/api';
 import { authClient } from '@/lib/auth-client';
 import { Ionicons } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
     LayoutAnimation,
-    Linking,
     Modal,
     Platform,
     ScrollView,
@@ -175,7 +175,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
             if (error) {
                 Alert.alert("Error", error.message || "Failed to create portal session");
             } else if (data?.url) {
-                Linking.openURL(data.url);
+                await WebBrowser.openBrowserAsync(data.url);
             }
         } catch (err) {
             console.error(err);
@@ -701,7 +701,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                             {user?.isAdmin && (
                                 <TouchableOpacity
                                     style={styles.adminBtn}
-                                    onPress={() => Linking.openURL('https://madeometer.com/admin')}
+                                    onPress={() => WebBrowser.openBrowserAsync('https://madeometer.com/admin')}
                                 >
                                     <Ionicons name="speedometer-outline" size={20} color="#d35457" />
                                     <Text style={styles.adminBtnText}>Admin Dashboard</Text>

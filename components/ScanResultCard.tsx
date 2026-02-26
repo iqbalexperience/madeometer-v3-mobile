@@ -1,5 +1,6 @@
 import { addToBlacklist, addToWhitelist, checkListStatus, generateTranslations, removeFromBlacklist, removeFromWhitelist } from '@/lib/api';
 import { Ionicons } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     Image,
@@ -39,36 +40,6 @@ interface ScanResultCardProps {
     onAuthRequest?: () => void;
 }
 
-// Simple translation mock for the component
-const t = (key: string) => {
-    const dict: any = {
-        'owner_company': 'Owner Company',
-        'made_in': 'Made In',
-        'about': 'About',
-        'reliability': 'Reliability & Sources',
-        'confidence': 'Confidence',
-        'verdict_safe': 'Safe',
-        'verdict_avoid': 'Avoid',
-        'verdict_neutral': 'Neutral',
-        'overview': 'Overview',
-        'alternatives': 'Alternatives',
-        'where_to_buy': 'Where to Buy',
-        'show_less': 'Show Less',
-        'read_more': 'Read More',
-        'verified_sources': 'Verified Sources',
-        'key_evidence': 'Key Evidence',
-        'potential_issues': 'Potential Issues',
-        'political_neutral': 'Political Neutral',
-        'usa_score': 'USA Ownership',
-        'bipartisan': 'BIPARTISAN',
-        'multiple_countries': 'Multiple countries',
-        'no_retailers': 'No retailers found',
-        'searching_alts': 'Searching for alternatives...',
-        'verdict_whitelisted': 'Whitelisted',
-        'verdict_blacklisted': 'Blacklisted',
-    };
-    return dict[key] || key;
-};
 
 const CountryFlag = ({ code, style }: { code?: string; style?: any }) => {
     if (!code || code.length !== 2) return <Text style={{ fontSize: 20 }}>🏳️</Text>;
@@ -106,7 +77,7 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
     const [showValidation, setShowValidation] = useState(false);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [isBannerExpanded, setIsBannerExpanded] = useState(true);
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const { plan } = useFeatureGate();
     const [isTranslating, setIsTranslating] = useState(false);
     const [aspectRatio, setAspectRatio] = useState<number | null>(null);
@@ -451,8 +422,8 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                             <View style={styles.infoCardHeader}>
                                 <Text style={styles.infoCardLabel}>{t('owner_company')}</Text>
                                 <View style={styles.infoCardActions}>
-                                    <TouchableOpacity style={styles.smallActionBtn} onPress={() => onReanalyze?.(result.id, 'madeometer-flash')}><Ionicons name="refresh-outline" size={16} color="#94A3B8" /></TouchableOpacity>
-                                    <TouchableOpacity style={styles.smallActionBtn}><Ionicons name="pencil" size={16} color="#94A3B8" /></TouchableOpacity>
+                                    <TouchableOpacity style={styles.smallActionBtn} onPress={() => onReanalyze?.(result.id, 'gemini-3-flash-preview')}><Ionicons name="refresh-outline" size={16} color="#94A3B8" /></TouchableOpacity>
+                                    <TouchableOpacity style={styles.smallActionBtn} onPress={() => onEdit?.(result)}><Ionicons name="pencil" size={16} color="#94A3B8" /></TouchableOpacity>
                                     <TouchableOpacity style={styles.smallActionBtn} onPress={() => onDelete?.(result.id)}><Ionicons name="trash-outline" size={16} color="#94A3B8" /></TouchableOpacity>
                                 </View>
                             </View>
@@ -460,10 +431,19 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                                 <CountryFlag code={result.ownerCountryCode} style={styles.largeFlag} />
                                 <View style={styles.ownerTextCol}>
                                     <Text style={styles.ownerCountryText}>{result.ownerCountry}</Text>
-                                    <View style={styles.ownerLinkRow}>
+                                    <TouchableOpacity
+                                        style={styles.ownerLinkRow}
+                                        onPress={async () => {
+                                            if (result.website) {
+                                                const url = result.website.startsWith('http') ? result.website : `https://${result.website}`;
+                                                await WebBrowser.openBrowserAsync(url);
+                                            }
+                                        }}
+                                        disabled={!result.website}
+                                    >
                                         <Text style={styles.ownerLinkText}>{result.ownerCompany}</Text>
-                                        <Ionicons name="link-outline" size={12} color="#3B82F6" />
-                                    </View>
+                                        {result.website && <Ionicons name="link-outline" size={12} color="#3B82F6" />}
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>

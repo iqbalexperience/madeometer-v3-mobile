@@ -215,7 +215,6 @@ export default function App() {
     // System Back Handler (Android Hardware & iOS Gesture)
     useEffect(() => {
         const handleBackAction = () => {
-            console.log(currentResults?.length)
             // 1. Check Modals
             if (isAuthModalOpen) {
                 setIsAuthModalOpen(false);
@@ -422,7 +421,13 @@ export default function App() {
         if (!item) return;
 
         setView(AppView.SCAN);
+        setStatusMessage(t('status_processing'));
+
+        // Handle image data carefully
         if (item.imageUrl?.startsWith('data:image')) {
+            setPreviewImage(item.imageUrl);
+        } else if (item.imageUrl?.startsWith('http') && !item.imageUrl.includes('plasticchange')) {
+            // Keep public URLs for blur preview
             setPreviewImage(item.imageUrl);
         }
 
@@ -434,15 +439,24 @@ export default function App() {
             const lang = 'en';
             let results: ScanResult[] = [];
 
-            if (item.imageUrl) {
+            // If it has a public image URL or base64, re-analyze as image
+            const isImage = item.imageUrl && (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('data:image'));
+
+            if (isImage) {
                 results = await analyzeImage(item.imageUrl, activePrefs, model, lang, userLocation);
             } else {
                 results = await analyzeText(item.itemName, activePrefs, model, lang, userLocation);
             }
 
             if (results.length > 0) {
-                const newResult = { ...results[0], id: item.id, userId: currentUser?.id, timestamp: Date.now(), imageUrl: item.imageUrl };
-                await saveScan(newResult); // Using saveScan (which might act as update if ID matched in backend) or updateScan
+                const newResult = {
+                    ...results[0],
+                    id: item.id,
+                    userId: currentUser?.id,
+                    timestamp: Date.now(),
+                    imageUrl: item.imageUrl
+                };
+                await saveScan(newResult);
 
                 setHistory(prev => prev.map(p => p.id === id ? newResult : p));
                 setCurrentResults(prev => prev.map(p => p.id === id ? newResult : p));
@@ -599,6 +613,20 @@ export default function App() {
         performScan(query, 'TEXT');
     };
 
+    const handleUpdateScan = async (updated: ScanResult) => {
+        try {
+            await saveScan(updated);
+            setHistory(prev => prev.map(p => p.id === updated.id ? updated : p));
+            setCurrentResults(prev => prev.map(p => p.id === updated.id ? updated : p));
+            if (selectedResult?.id === updated.id) {
+                setSelectedResult(updated);
+            }
+        } catch (error) {
+            console.error("Failed to update scan", error);
+            Alert.alert("Error", "Failed to save changes.");
+        }
+    };
+
     const renderBottomNav = () => (
         <View style={styles.bottomNav}>
             <TouchableOpacity style={styles.navItem} onPress={() => { setActiveTab('home'); setView(AppView.SCAN); }}>
@@ -685,6 +713,8 @@ export default function App() {
                             showUsaMeter={preferences.find(p => p.id === 'show_usa_meter')?.active}
                             showPoliticalMeter={preferences.find(p => p.id === 'show_political_meter')?.active}
                             onFeedback={() => { setFeedbackContext('SCAN'); setIsFeedbackOpen(true); }}
+                            onEdit={() => setIsEditingScan(true)}
+                            onUpdate={handleUpdateScan}
                         />
                     )}
 
@@ -739,10 +769,7 @@ export default function App() {
                     isOpen={isEditingScan}
                     onClose={() => setIsEditingScan(false)}
                     scanResult={selectedResult}
-                    onSave={(updated) => {
-                        setSelectedResult(updated);
-                        setIsEditingScan(false);
-                    }}
+                    onSave={handleUpdateScan}
                 />
 
                 <FeedbackModal
