@@ -1,13 +1,22 @@
 {
   "expo": {
-    "name": "madeometer-v3-mobile",
-    "slug": "madeometer-v3-mobile",
-    "version": "1.0.0",
+    "name": "madeometer",
+    "slug": "madeometer",
+    "version": "1.0.5",
     "orientation": "portrait",
     "scheme": "madeometerv3mobile",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      },
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "com.i7evenaps.madeometer",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -20,7 +29,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#d04050"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.i7evenaps.madeometer",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "output": "static",
@@ -40,7 +51,32 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "27d2b555-cedd-4d04-8a5e-571123eb09e4"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/27d2b555-cedd-4d04-8a5e-571123eb09e4"
+    },
+    "assetBundlePatterns": [
+      "**/*"
     ],
     "experiments": {
       "typedRoutes": true,
