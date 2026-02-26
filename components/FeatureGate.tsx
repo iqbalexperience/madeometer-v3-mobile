@@ -53,9 +53,12 @@ export function FeatureGate({
     if (mode === "lock") {
         return (
             <TouchableOpacity onPress={triggerUpgrade} activeOpacity={0.9} style={styles.overlayContainer}>
-                <View style={styles.lockedContent}>{children}</View>
+                <View style={styles.lockedContent} pointerEvents="none">
+                    {children}
+                </View>
                 <View style={styles.lockBadge}>
-                    <Ionicons name="lock-closed" size={12} color="#64748B" />
+                    <Ionicons name="lock-closed" size={10} color="#F59E0B" />
+                    <Text style={styles.lockBadgeText}>PLUS</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -64,7 +67,9 @@ export function FeatureGate({
     if (mode === "blur") {
         return (
             <TouchableOpacity onPress={triggerUpgrade} activeOpacity={0.9} style={styles.overlayContainer}>
-                <View style={styles.lockedContent}>{children}</View>
+                <View style={styles.lockedContent} pointerEvents="none">
+                    {children}
+                </View>
                 <BlurView intensity={30} style={styles.blurOverlay}>
                     <View style={styles.lockIconCircleLarge}>
                         <Ionicons name="lock-closed" size={18} color="#000" />
@@ -124,25 +129,23 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     lockedContent: {
-        opacity: 0.5,
     },
     lockBadge: {
         position: 'absolute',
         top: 4,
         right: 4,
-        backgroundColor: 'rgba(255,255,255,0.9)',
-        width: 24,
-        height: 24,
-        borderRadius: 12,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#E2E8F0',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 1,
+        gap: 2,
+        backgroundColor: '#FEF3C7',
+        paddingHorizontal: 4,
+        paddingVertical: 1,
+        borderRadius: 4,
+    },
+    lockBadgeText: {
+        fontSize: 8,
+        fontWeight: '800',
+        color: '#B45309',
     },
     blurOverlay: {
         ...StyleSheet.absoluteFillObject,

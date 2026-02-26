@@ -4,19 +4,19 @@ import * as Location from 'expo-location';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Alert,
+    BackHandler,
     Platform,
-    SafeAreaView,
     StatusBar,
     StyleSheet,
     Text,
     TouchableOpacity,
-    UIManager,
     View
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+// if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+//     UIManager.setLayoutAnimationEnabledExperimental(true);
+// }
 
 // Import from our mobile-native files
 import {
@@ -33,7 +33,7 @@ import {
     saveScan,
     uploadFile
 } from '@/lib/api';
-import { authClient, signIn, useSession } from '@/lib/auth-client';
+import { authClient, signIn, signUp, useSession } from '@/lib/auth-client';
 import AuthModal from '../components/AuthModal';
 import CartSummary from '../components/CartSummary';
 import CommunityView from '../components/CommunityView';
@@ -45,6 +45,7 @@ import HistoryList from '../components/HistoryList';
 import ProfileView from '../components/ProfileView';
 import Scanner from '../components/Scanner';
 import ScanResultCard from '../components/ScanResultCard';
+import { useFeatureGate } from '../contexts/FeatureGateContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import {
     AppView,
@@ -61,6 +62,7 @@ export default function App() {
     // const router = useRouter(); // Currently unused
     const { data: session, isPending: isSessionPending } = useSession();
     const { t } = useLanguage();
+    const { updatePlan } = useFeatureGate();
 
     // State
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -93,31 +95,73 @@ export default function App() {
 
     const authAttempted = useRef(false);
 
-    // Initial Auth Sync
+    // Initial Auth Sync & Data Refresh
     useEffect(() => {
-        if (!isSessionPending && session) {
-            const profile: UserProfile = {
-                id: session.user.id,
-                email: session.user.email,
-                name: session.user.name || undefined,
-                isAdmin: !!(session.user as any).role?.includes('admin'),
-                isGuest: session.user.isAnonymous || false,
-                joinedAt: session.user.createdAt ? new Date(session.user.createdAt).getTime() : Date.now()
-            };
-            setCurrentUser(profile);
-            loadUserData(profile.id);
-        } else if (!isSessionPending && !session && !authAttempted.current) {
-            authAttempted.current = true;
-            signIn.anonymous().catch(() => {
-                authAttempted.current = false;
-            });
+        if (!isSessionPending) {
+            if (session) {
+                const profile: UserProfile = {
+                    id: session.user.id,
+                    email: session.user.email,
+                    name: session.user.name || undefined,
+                    isAdmin: !!(session.user as any).role?.includes('admin'),
+                    isGuest: session.user.isAnonymous || false,
+                    joinedAt: session.user.createdAt ? new Date(session.user.createdAt).getTime() : Date.now()
+                };
+
+                // Reset states before loading new data (especially if switching users)
+                if (currentUser?.id && currentUser.id !== profile.id) {
+                    // Update current scan results with new user ID if transitioning from guest
+                    if (currentUser.isGuest && !profile.isGuest) {
+                        setCurrentResults(prev => prev.map(r => ({ ...r, userId: profile.id })));
+                        setSelectedResult(prev => prev ? { ...prev, userId: profile.id } : null);
+                    } else {
+                        // Completely different user or logged out - clear data
+                        setCurrentResults([]);
+                        setSelectedResult(null);
+                    }
+
+                    setHistory([]);
+                    setIsHistoryFetched(false);
+                    setSubscription(null);
+                }
+
+                setCurrentUser(profile);
+                loadUserData(profile.id);
+            } else if (!authAttempted.current) {
+                authAttempted.current = true;
+                signIn.anonymous().catch(() => {
+                    authAttempted.current = false;
+                });
+            } else {
+                // Session is null and initial auth attempt finished - clean up
+                setCurrentUser(null);
+                setHistory([]);
+                setIsHistoryFetched(false);
+                setCurrentResults([]);
+                setSelectedResult(null);
+                setSubscription(null);
+
+                // Fetch global preferences instead of clearing them
+                getGlobalPreferences().then(global => {
+                    setPreferences(global || []);
+                }).catch(() => {
+                    setPreferences([]);
+                });
+            }
         }
     }, [session, isSessionPending]);
 
     const loadUserData = async (userId: string) => {
-        const prefs = await getPreferences(userId);
-        if (prefs) setPreferences(prefs);
-        else {
+        try {
+            const prefs = await getPreferences(userId);
+            if (prefs && prefs.length > 0) {
+                setPreferences(prefs);
+            } else {
+                const global = await getGlobalPreferences();
+                setPreferences(global || []);
+            }
+        } catch (err) {
+            console.error("Failed to load user preferences", err);
             const global = await getGlobalPreferences();
             setPreferences(global || []);
         }
@@ -126,6 +170,9 @@ export default function App() {
             const { data } = await (authClient as any).subscription.list();
             const active = data?.find((sub: any) => sub.status === "active" || sub.status === "trialing");
             setSubscription(active || null);
+            if (active?.plan) {
+                updatePlan(active.plan);
+            }
         } catch (err) {
             console.error("Failed to fetch subscription", err);
         }
@@ -164,6 +211,76 @@ export default function App() {
             loadHistory();
         }
     }, [activeTab, currentUser?.id, isHistoryFetched]);
+
+    // System Back Handler (Android Hardware & iOS Gesture)
+    useEffect(() => {
+        const handleBackAction = () => {
+            console.log(currentResults?.length)
+            // 1. Check Modals
+            if (isAuthModalOpen) {
+                setIsAuthModalOpen(false);
+                return true;
+            }
+            if (isEditingScan) {
+                setIsEditingScan(false);
+                return true;
+            }
+            if (isFeedbackOpen) {
+                setIsFeedbackOpen(false);
+                return true;
+            }
+            if (isConfirmOpen) {
+                setIsConfirmOpen(false);
+                return true;
+            }
+
+
+            // 2. Check View transitions
+            if (view === AppView.DETAILS) {
+                if (currentResults.length > 1) {
+                    setView(AppView.CART);
+                } else if (activeTab === 'history') {
+                    setView(AppView.HISTORY);
+                } else {
+                    setView(AppView.SCAN);
+                }
+                return true;
+            }
+
+            if (view === AppView.CART) {
+                if (activeTab === 'history') {
+                    setView(AppView.HISTORY);
+                } else {
+                    setView(AppView.SCAN);
+                }
+                setCurrentResults([]);
+                return true;
+            }
+
+            if (view === AppView.PROFILE || view === AppView.SUPPORT) {
+                setActiveTab('home');
+                setView(AppView.SCAN);
+                return true;
+            }
+
+            // 3. Tab transitions
+            if (activeTab !== 'home') {
+                setActiveTab('home');
+                setView(AppView.SCAN);
+                return true;
+            }
+
+            // Default: exit app (Android) or default behavior (iOS)
+            return false;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            handleBackAction
+        );
+
+        return () => backHandler.remove();
+    }, [isAuthModalOpen, isEditingScan, isFeedbackOpen, isConfirmOpen, view, activeTab, currentResults.length]);
 
     // Handlers
     const handleDeleteScan = async (id: string) => {
@@ -509,140 +626,146 @@ export default function App() {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="light-content" />
+        <SafeAreaProvider>
+            <SafeAreaView style={styles.container}>
+                <StatusBar barStyle="light-content" />
 
-            {/* Header */}
-            <Header
-                onHome={() => { setActiveTab('home'); setView(AppView.SCAN); }}
-                activeModel={activeModel}
-                onModelChange={setActiveModel}
-                subscription={subscription}
-                isAdmin={currentUser?.isAdmin}
-            />
+                {/* Header */}
+                <Header
+                    onHome={() => { setActiveTab('home'); setView(AppView.SCAN); }}
+                    activeModel={activeModel}
+                    onModelChange={setActiveModel}
+                    subscription={subscription}
+                    isAdmin={currentUser?.isAdmin}
+                />
 
-            {/* Content */}
-            <View style={styles.content}>
-                {view === AppView.HISTORY && (
-                    <HistoryList
-                        history={history}
-                        isLoading={isHistoryLoading}
-                        onSelect={handleSelectResult}
-                        onSelectGroup={(items) => {
-                            setCurrentResults(items);
-                            setView(AppView.CART);
-                        }}
-                        onDelete={handleDeleteScan}
-                    />
-                )}
+                {/* Content */}
+                <View style={styles.content}>
+                    {view === AppView.HISTORY && (
+                        <HistoryList
+                            history={history}
+                            isLoading={isHistoryLoading}
+                            onSelect={handleSelectResult}
+                            onSelectGroup={(items) => {
+                                setCurrentResults(items);
+                                setView(AppView.CART);
+                            }}
+                            onDelete={handleDeleteScan}
+                        />
+                    )}
 
-                {view === AppView.SCAN && (
-                    <Scanner
-                        isAnalyzing={isAnalyzing}
-                        previewImage={previewImage}
-                        onCameraClick={handleCameraClick}
-                        onGalleryClick={handleGalleryClick}
-                        onSearch={handleSearch}
-                        activeModel={activeModel}
-                        onSupportClick={() => { setActiveTab('support'); setView(AppView.SUPPORT); }}
-                        loadingMessages={loadingMessages}
-                    />
-                )}
+                    {view === AppView.SCAN && (
+                        <Scanner
+                            isAnalyzing={isAnalyzing}
+                            previewImage={previewImage}
+                            onCameraClick={handleCameraClick}
+                            onGalleryClick={handleGalleryClick}
+                            onSearch={handleSearch}
+                            activeModel={activeModel}
+                            onSupportClick={() => { setActiveTab('support'); setView(AppView.SUPPORT); }}
+                            loadingMessages={loadingMessages}
+                        />
+                    )}
 
-                {view === AppView.DETAILS && selectedResult && (
-                    <ScanResultCard
-                        result={selectedResult}
-                        onBack={() => {
-                            if (currentResults.length > 1) setView(AppView.CART);
-                            else if (activeTab === 'history') setView(AppView.HISTORY);
-                            else setView(AppView.SCAN);
-                        }}
-                        onDelete={handleDeleteScan}
-                        isAdmin={currentUser?.isAdmin}
-                        onReanalyze={handleReanalyze}
-                        onFindAlternatives={handleFindAlternatives}
-                        onFindShoppingOptions={handleFindShoppingOptions}
-                        isFindingAlternatives={isFindingAlternatives}
-                        isFindingShoppingOptions={isFindingShoppingOptions}
-                        showUsaMeter={preferences.find(p => p.id === 'show_usa_meter')?.active}
-                        showPoliticalMeter={preferences.find(p => p.id === 'show_political_meter')?.active}
-                        onFeedback={() => { setFeedbackContext('SCAN'); setIsFeedbackOpen(true); }}
-                    />
-                )}
+                    {view === AppView.DETAILS && selectedResult && (
+                        <ScanResultCard
+                            result={selectedResult}
+                            onBack={() => {
+                                if (currentResults.length > 1) setView(AppView.CART);
+                                else if (activeTab === 'history') setView(AppView.HISTORY);
+                                else setView(AppView.SCAN);
+                            }}
+                            onDelete={handleDeleteScan}
+                            isAdmin={currentUser?.isAdmin}
+                            onReanalyze={handleReanalyze}
+                            onFindAlternatives={handleFindAlternatives}
+                            onFindShoppingOptions={handleFindShoppingOptions}
+                            isFindingAlternatives={isFindingAlternatives}
+                            isFindingShoppingOptions={isFindingShoppingOptions}
+                            showUsaMeter={preferences.find(p => p.id === 'show_usa_meter')?.active}
+                            showPoliticalMeter={preferences.find(p => p.id === 'show_political_meter')?.active}
+                            onFeedback={() => { setFeedbackContext('SCAN'); setIsFeedbackOpen(true); }}
+                        />
+                    )}
 
-                {view === AppView.CART && currentResults.length > 0 && (
-                    <CartSummary
-                        results={currentResults}
-                        onSelectResult={handleSelectResult}
-                        onBack={() => {
-                            if (activeTab === 'history') setView(AppView.HISTORY);
-                            else setView(AppView.SCAN);
-                        }}
-                        activePreferences={preferences}
-                    />
-                )}
+                    {view === AppView.CART && currentResults.length > 0 && (
+                        <CartSummary
+                            results={currentResults}
+                            onSelectResult={handleSelectResult}
+                            onBack={() => {
+                                if (activeTab === 'history') setView(AppView.HISTORY);
+                                else setView(AppView.SCAN);
+                            }}
+                            activePreferences={preferences}
+                        />
+                    )}
 
-                {view === AppView.PROFILE && (
-                    <ProfileView
-                        user={currentUser}
-                        preferences={preferences}
-                        onToggle={handleTogglePreference}
-                        onAdd={handleAddPreference}
-                        onUpdate={handleUpdatePreference}
-                        onDelete={handleDeletePreference}
-                        onBack={() => { setActiveTab('home'); setView(AppView.SCAN); }}
-                        onLogout={async () => {
-                            await authClient.signOut();
-                            setCurrentUser(null);
-                            setSubscription(null);
-                        }}
-                        onAuthRequest={() => setIsAuthModalOpen(true)}
-                        subscription={subscription}
-                    />
-                )}
-                {view === AppView.SUPPORT && (
-                    <CommunityView onClose={() => { setActiveTab('home'); setView(AppView.SCAN); }} />
-                )}
-            </View>
+                    {view === AppView.PROFILE && (
+                        <ProfileView
+                            user={currentUser}
+                            preferences={preferences}
+                            onToggle={handleTogglePreference}
+                            onAdd={handleAddPreference}
+                            onUpdate={handleUpdatePreference}
+                            onDelete={handleDeletePreference}
+                            onBack={() => { setActiveTab('home'); setView(AppView.SCAN); }}
+                            onLogout={async () => {
+                                await authClient.signOut();
+                                // Auth state change will be handled by useEffect
+                            }}
+                            onAuthRequest={() => setIsAuthModalOpen(true)}
+                            subscription={subscription}
+                        />
+                    )}
+                    {view === AppView.SUPPORT && (
+                        <CommunityView onClose={() => { setActiveTab('home'); setView(AppView.SCAN); }} />
+                    )}
+                </View>
 
-            {/* Modals */}
-            <AuthModal
-                visible={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)}
-                onLogin={async () => setIsAuthModalOpen(false)}
-                onRegister={async () => setIsAuthModalOpen(false)}
-            />
+                {/* Modals */}
+                <AuthModal
+                    visible={isAuthModalOpen}
+                    onClose={() => setIsAuthModalOpen(false)}
+                    onLogin={async (email, password) => {
+                        await signIn.email({ email, password });
+                        // isAuthModalOpen(false) removed here as it will be handled by useEffect session sync or within AuthModal for local state
+                    }}
+                    onRegister={async (name, email, password) => {
+                        await signUp.email({ name, email, password });
+                    }}
+                />
 
-            <EditScanModal
-                isOpen={isEditingScan}
-                onClose={() => setIsEditingScan(false)}
-                scanResult={selectedResult}
-                onSave={(updated) => {
-                    setSelectedResult(updated);
-                    setIsEditingScan(false);
-                }}
-            />
+                <EditScanModal
+                    isOpen={isEditingScan}
+                    onClose={() => setIsEditingScan(false)}
+                    scanResult={selectedResult}
+                    onSave={(updated) => {
+                        setSelectedResult(updated);
+                        setIsEditingScan(false);
+                    }}
+                />
 
-            <FeedbackModal
-                isOpen={isFeedbackOpen}
-                onClose={() => setIsFeedbackOpen(false)}
-                isSubmitting={false}
-                onSubmit={handleFeedbackSubmit}
-                userEmail={currentUser?.email}
-                context={feedbackContext}
-            />
+                <FeedbackModal
+                    isOpen={isFeedbackOpen}
+                    onClose={() => setIsFeedbackOpen(false)}
+                    isSubmitting={false}
+                    onSubmit={handleFeedbackSubmit}
+                    userEmail={currentUser?.email}
+                    context={feedbackContext}
+                />
 
-            <ConfirmationModal
-                isOpen={isConfirmOpen}
-                onClose={() => setIsConfirmOpen(false)}
-                onConfirm={() => { }}
-                title="Delete Item"
-                message="Are you sure you want to delete this?"
-            />
+                <ConfirmationModal
+                    isOpen={isConfirmOpen}
+                    onClose={() => setIsConfirmOpen(false)}
+                    onConfirm={() => { }}
+                    title="Delete Item"
+                    message="Are you sure you want to delete this?"
+                />
 
-            {/* Bottom Nav */}
-            {renderBottomNav()}
-        </SafeAreaView>
+                {/* Bottom Nav */}
+                {renderBottomNav()}
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
@@ -726,6 +849,10 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 32,
+        borderTopRightRadius: 32,
+        overflow: 'hidden',
     },
     bottomNav: {
         flexDirection: 'row',

@@ -42,12 +42,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     const resetForm = () => {
         setName('');
         setEmail('');
         setPassword('');
         setError(null);
+        setSuccess(null);
         setLoading(false);
     };
 
@@ -59,10 +61,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
     const switchMode = (next: AuthMode) => {
         setMode(next);
         setError(null);
+        setSuccess(null);
     };
 
     const handleSubmit = async () => {
         setError(null);
+        setSuccess(null);
         if (!email.trim() || !password.trim()) {
             setError(t('email_password_required') ?? 'Email and password are required.');
             return;
@@ -75,14 +79,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
         try {
             if (mode === 'REGISTER') {
                 await onRegister(name.trim(), email.trim(), password);
+                setSuccess(t('register_success') ?? 'Account created successfully!');
             } else {
                 await onLogin(email.trim(), password);
+                setSuccess(t('login_success') ?? 'Logged in successfully!');
             }
-            resetForm();
-            onClose();
+
+            // Wait a moment for the success message to be seen before closing
+            setTimeout(() => {
+                resetForm();
+                onClose();
+            }, 1500);
         } catch (err: any) {
             setError(err.message ?? 'An error occurred.');
-        } finally {
             setLoading(false);
         }
     };
@@ -91,7 +100,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
         <Modal
             visible={visible}
             transparent
-            animationType="slide"
+            animationType="fade"
             onRequestClose={handleClose}
             statusBarTranslucent
         >
@@ -112,15 +121,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
                             {mode === 'LOGIN' ? t('welcome_back') : t('create_account')}
                         </Text>
                         <TouchableOpacity onPress={handleClose} style={styles.closeBtn}>
-                            <Ionicons name="close" size={20} color={Colors.textSecondary} />
+                            <Ionicons name="close" size={20} color="#ffffff" />
                         </TouchableOpacity>
                     </View>
 
-                    {/* Error */}
+                    {/* Feedback Banners */}
                     {error ? (
                         <View style={styles.errorBanner}>
                             <View style={styles.errorDot} />
                             <Text style={styles.errorText}>{error}</Text>
+                        </View>
+                    ) : null}
+
+                    {success ? (
+                        <View style={styles.successBanner}>
+                            <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                            <Text style={styles.successText}>{success}</Text>
                         </View>
                     ) : null}
 
@@ -129,16 +145,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
                         <View style={styles.field}>
                             <Text style={styles.fieldLabel}>{t('full_name') ?? 'Full Name'}</Text>
                             <View style={styles.inputRow}>
-                                <Ionicons name="person-outline" size={18} color={Colors.textMuted} style={styles.inputIcon} />
-                                <TextInput
+                                <Ionicons name="person-outline" size={18} color="#000000" style={styles.inputIcon} />
+                                {/* <TextInput
                                     style={styles.input}
                                     placeholder="John Doe"
-                                    placeholderTextColor={Colors.textMuted}
+                                    placeholderTextColor="#9ca3af"
                                     value={name}
                                     onChangeText={setName}
                                     autoCapitalize="words"
                                     returnKeyType="next"
-                                />
+                                    editable={!loading}
+                                /> */}
                             </View>
                         </View>
                     )}
@@ -147,16 +164,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
                     <View style={styles.field}>
                         <Text style={styles.fieldLabel}>{t('email')}</Text>
                         <View style={styles.inputRow}>
-                            <Ionicons name="mail-outline" size={18} color={Colors.textMuted} style={styles.inputIcon} />
+                            <Ionicons name="mail-outline" size={18} color="#000000" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="you@example.com"
-                                placeholderTextColor={Colors.textMuted}
+                                placeholderTextColor="#9ca3af"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
+                                autoComplete="email"
+                                textContentType="emailAddress"
                                 returnKeyType="next"
+                                editable={!loading}
                             />
                         </View>
                     </View>
@@ -165,25 +185,28 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
                     <View style={styles.field}>
                         <Text style={styles.fieldLabel}>{t('password')}</Text>
                         <View style={styles.inputRow}>
-                            <Ionicons name="lock-closed-outline" size={18} color={Colors.textMuted} style={styles.inputIcon} />
+                            <Ionicons name="lock-closed-outline" size={18} color="#000000" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="••••••••"
-                                placeholderTextColor={Colors.textMuted}
+                                placeholderTextColor="#9ca3af"
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry
+                                autoComplete="password"
+                                textContentType="password"
                                 returnKeyType="done"
                                 onSubmitEditing={handleSubmit}
+                                editable={!loading}
                             />
                         </View>
                     </View>
 
                     {/* Submit */}
                     <TouchableOpacity
-                        style={[styles.submitBtn, loading && styles.submitBtnDisabled]}
+                        style={[styles.submitBtn, (loading || success) && styles.submitBtnDisabled]}
                         onPress={handleSubmit}
-                        disabled={loading}
+                        disabled={loading || !!success}
                         activeOpacity={0.85}
                     >
                         {loading ? (
@@ -203,7 +226,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
                         <Text style={styles.switchLabel}>
                             {mode === 'LOGIN' ? t('no_account') : t('have_account')}
                         </Text>
-                        <TouchableOpacity onPress={() => switchMode(mode === 'LOGIN' ? 'REGISTER' : 'LOGIN')}>
+                        <TouchableOpacity
+                            onPress={() => switchMode(mode === 'LOGIN' ? 'REGISTER' : 'LOGIN')}
+                            disabled={loading}
+                        >
                             <Text style={styles.switchLink}>
                                 {mode === 'LOGIN' ? t('sign_up') : t('sign_in')}
                             </Text>
@@ -221,20 +247,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ visible, onClose, onLogin, onRegi
 const styles = StyleSheet.create({
     backdrop: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.7)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     kavWrapper: {
         flex: 1,
         justifyContent: 'flex-end',
     },
     sheet: {
-        backgroundColor: Colors.bgSurface,
+        backgroundColor: '#ffffff',
         borderTopLeftRadius: Radius.xxl,
         borderTopRightRadius: Radius.xxl,
         padding: Spacing.xl,
         paddingBottom: Spacing.xxxl,
         borderTopWidth: 1,
-        borderTopColor: Colors.borderLight,
+        borderTopColor: '#e5e7eb',
     },
     header: {
         flexDirection: 'row',
@@ -245,14 +271,14 @@ const styles = StyleSheet.create({
     title: {
         fontSize: Typography.xxl,
         fontWeight: '800',
-        color: Colors.textPrimary,
+        color: '#111827',
         letterSpacing: -0.5,
     },
     closeBtn: {
         width: 36,
         height: 36,
         borderRadius: Radius.full,
-        backgroundColor: Colors.bgHighlight,
+        backgroundColor: '#222',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -260,22 +286,39 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.sm,
-        backgroundColor: Colors.verdictAvoid,
+        backgroundColor: '#fef2f2',
         borderWidth: 1,
-        borderColor: Colors.verdictAvoidBorder,
+        borderColor: '#fecaca',
         borderRadius: Radius.md,
         padding: Spacing.md,
         marginBottom: Spacing.md,
+    },
+    successBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+        backgroundColor: '#ecfdf5',
+        borderWidth: 1,
+        borderColor: '#10B981',
+        borderRadius: Radius.md,
+        padding: Spacing.md,
+        marginBottom: Spacing.md,
+    },
+    successText: {
+        fontSize: Typography.sm,
+        color: '#065f46',
+        fontWeight: '600',
+        flex: 1,
     },
     errorDot: {
         width: 6,
         height: 6,
         borderRadius: 3,
-        backgroundColor: Colors.brand,
+        backgroundColor: '#ef4444',
     },
     errorText: {
         fontSize: Typography.sm,
-        color: Colors.verdictAvoidText,
+        color: '#991b1b',
         fontWeight: '600',
         flex: 1,
     },
@@ -285,7 +328,7 @@ const styles = StyleSheet.create({
     fieldLabel: {
         fontSize: Typography.xs,
         fontWeight: '700',
-        color: Colors.textSecondary,
+        color: '#4b5563',
         textTransform: 'uppercase',
         letterSpacing: 0.8,
         marginBottom: 6,
@@ -293,20 +336,21 @@ const styles = StyleSheet.create({
     inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.bgHighlight,
+        backgroundColor: '#f9fafb',
         borderWidth: 1,
-        borderColor: Colors.borderLight,
+        borderColor: '#e5e7eb',
         borderRadius: Radius.md,
         paddingHorizontal: Spacing.md,
     },
     inputIcon: {
         marginRight: Spacing.sm,
+        color: '#000000',
     },
     input: {
         flex: 1,
         paddingVertical: Spacing.md,
         fontSize: Typography.base,
-        color: Colors.textPrimary,
+        color: '#000000',
         fontWeight: '500',
     },
     submitBtn: {
@@ -324,7 +368,7 @@ const styles = StyleSheet.create({
     submitText: {
         fontSize: Typography.base,
         fontWeight: '700',
-        color: Colors.textWhite,
+        color: '#ffffff',
     },
     switchRow: {
         flexDirection: 'row',
@@ -335,7 +379,7 @@ const styles = StyleSheet.create({
     },
     switchLabel: {
         fontSize: Typography.sm,
-        color: Colors.textSecondary,
+        color: '#4b5563',
     },
     switchLink: {
         fontSize: Typography.sm,
@@ -344,7 +388,7 @@ const styles = StyleSheet.create({
     },
     disclaimer: {
         fontSize: 10,
-        color: Colors.textMuted,
+        color: '#9ca3af',
         textAlign: 'center',
         lineHeight: 15,
     },

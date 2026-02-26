@@ -109,10 +109,23 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
     const { language } = useLanguage();
     const { plan } = useFeatureGate();
     const [isTranslating, setIsTranslating] = useState(false);
+    const [aspectRatio, setAspectRatio] = useState<number | null>(null);
 
     // Whitelist/Blacklist State
     const [isWhitelistedItem, setIsWhitelistedItem] = useState(false);
     const [isBlacklistedItem, setIsBlacklistedItem] = useState(false);
+
+    useEffect(() => {
+        if (result.imageUrl) {
+            Image.getSize(result.imageUrl, (width, height) => {
+                if (width && height) {
+                    setAspectRatio(width / height);
+                }
+            }, (error) => {
+                console.error("Failed to get image size", error);
+            });
+        }
+    }, [result.imageUrl]);
 
     // --- TRANSLATION LOGIC ---
     const displayData = useMemo(() => {
@@ -287,13 +300,12 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
     const renderBoundingBoxDot = () => {
         if (!result.box_2d) return null;
         const [ymin, xmin, ymax, xmax] = result.box_2d;
-        const top = (((ymin + ymax) / 2 / 1000) * 100).toString() + '%' as any;
-        const left = (((xmin + xmax) / 2 / 1000) * 100).toString() + '%' as any;
+        const top = ((ymin + ymax) / 2 / 1000) * 100;
+        const left = ((xmin + xmax) / 2 / 1000) * 100;
 
         return (
-            <View style={[styles.dotContainer, { top, left }]}>
-                <View style={styles.dotRipple} />
-                <View style={[styles.dot, { backgroundColor: vConfig.color }]} />
+            <View style={[styles.dotWrapper, { top: `${top}%`, left: `${left}%` }]}>
+                <View style={[styles.dot, { backgroundColor: vConfig.color, borderColor: '#fff' }]} />
             </View>
         );
     };
@@ -401,8 +413,10 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                         <View style={styles.blurOverlay} />
                     </View>
                     <View style={styles.mainImageContainer}>
-                        <Image source={{ uri: result.imageUrl }} style={styles.productImage} resizeMode="contain" />
-                        {renderBoundingBoxDot()}
+                        <View style={[styles.imageWrapper, aspectRatio ? { aspectRatio } : null]}>
+                            <Image source={{ uri: result.imageUrl }} style={styles.productImage} resizeMode="contain" />
+                            {renderBoundingBoxDot()}
+                        </View>
                     </View>
                 </View>
 
@@ -778,15 +792,26 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 20,
+        padding: 10,
+    },
+    imageWrapper: {
+        maxHeight: '100%',
+        maxWidth: '100%',
+        borderRadius: 20,
+        overflow: 'hidden',
+        position: 'relative',
     },
     productImage: {
         width: '100%',
         height: '100%',
-        borderRadius: 16,
     },
-    dotContainer: {
+    dotWrapper: {
         position: 'absolute',
+        width: 32,
+        height: 32,
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: [{ translateX: -16 }, { translateY: -16 }],
     },
     centered: {
         flex: 1,
@@ -832,17 +857,10 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#3B82F6',
     },
-    dotRipple: {
-        position: 'absolute',
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: 'rgba(255,255,255,0.8)',
-    },
     dot: {
-        width: 14,
-        height: 14,
-        borderRadius: 7,
+        width: 12,
+        height: 12,
+        borderRadius: 6,
         borderWidth: 2,
         borderColor: '#fff',
     },

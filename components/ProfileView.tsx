@@ -1,4 +1,4 @@
-import { getBlacklist, getWhitelist, removeFromBlacklist, removeFromWhitelist } from '@/lib/api';
+import { getBlacklist, getWhitelist, removeFromBlacklist, removeFromWhitelist, saveFeedback } from '@/lib/api';
 import { authClient } from '@/lib/auth-client';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -9,14 +9,12 @@ import {
     Linking,
     Modal,
     Platform,
-    SafeAreaView,
     ScrollView,
     StyleSheet,
     Switch,
     Text,
     TextInput,
     TouchableOpacity,
-    UIManager,
     View
 } from 'react-native';
 import { useFeatureGate } from '../contexts/FeatureGateContext';
@@ -25,12 +23,13 @@ import { Preference, UserProfile } from '../types';
 import { LanguageCode } from '../utils/translations';
 import AppFeaturesModal from './AppFeaturesModal';
 import { FeatureGate } from './FeatureGate';
+import FeedbackModal from './FeedbackModal';
 import LegalModal from './LegalModal';
-import { UpgradeDialog } from './UpgradeDialog';
+// Removed redundant UpgradeDialog import
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+// if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+//     UIManager.setLayoutAnimationEnabledExperimental(true);
+// }
 
 interface ProfileViewProps {
     user: UserProfile | null;
@@ -122,10 +121,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
     const [editPrefix, setEditPrefix] = useState('Avoid');
-    const [upgradeOpen, setUpgradeOpen] = useState(false);
+    // Removed local upgradeOpen state
     const [isLegalOpen, setIsLegalOpen] = useState(false);
     const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     // Pickers State
     const [pickerType, setPickerType] = useState<'language' | 'currency' | 'country' | null>(null);
@@ -134,6 +136,34 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     const [whitelist, setWhitelist] = useState<any[]>([]);
     const [blacklist, setBlacklist] = useState<any[]>([]);
     const [isListsLoading, setIsListsLoading] = useState(false);
+
+    const handleFeedbackSubmit = async (type: string, message: string, email: string) => {
+        setIsSubmittingFeedback(true);
+        try {
+            await saveFeedback({
+                email,
+                text: message,
+                source: `MOBILE_PROFILE_${type}`,
+            });
+            Alert.alert("Success", "Thank you for your feedback!");
+            setIsFeedbackOpen(false);
+        } catch (err) {
+            console.error(err);
+            Alert.alert("Error", "Failed to send feedback. Please try again.");
+        } finally {
+            setIsSubmittingFeedback(false);
+        }
+    };
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        try {
+            await onLogout();
+        } catch (err) {
+            setIsLoggingOut(false);
+            Alert.alert("Error", "Logout failed. Please try again.");
+        }
+    };
 
     const handleManageSubscription = async () => {
         setIsLoading(true);
@@ -412,7 +442,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {renderHeader()}
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 {activeTab === 'rules' ? (
@@ -430,7 +460,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                                 <Ionicons name="search-outline" size={18} color="#94A3B8" />
                                 <TextInput
                                     style={styles.searchInput}
-                                    placeholder={t('search_rules') || "Search rules..."}
+                                    placeholder={t('search_rules')}
                                     value={searchTerm}
                                     onChangeText={setSearchTerm}
                                 />
@@ -555,15 +585,42 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                                         <Text style={styles.userEmail}>{user.email}</Text>
                                         <View style={styles.planBadge}>
                                             <Text style={styles.planText}>
-                                                {user.isAdmin ? t('super_admin') : (subscription ? t(`${subscription.plan}_member`) : t('free_member'))}
+                                                {user.isAdmin ? t('super_admin') : (subscription?.plan ? t(`${subscription.plan}_member`) : t('free_member'))}
                                             </Text>
                                         </View>
                                     </View>
                                 </View>
-                                <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
-                                    <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-                                    <Text style={styles.logoutText}>{t('logout') || 'Logout'}</Text>
-                                </TouchableOpacity>
+
+                                <View style={styles.userActions}>
+                                    {!user.isAdmin && (
+                                        <TouchableOpacity
+                                            style={styles.actionBtnSub}
+                                            onPress={subscription ? handleManageSubscription : () => openUpgradeDialog()}
+                                            disabled={isLoading}
+                                        >
+                                            {isLoading ? (
+                                                <ActivityIndicator size="small" color="#d35457" />
+                                            ) : (
+                                                <>
+                                                    <Ionicons name={subscription ? "card-outline" : "star"} size={18} color="#d35457" />
+                                                    <Text style={styles.actionBtnText}>
+                                                        {subscription ? t('manage_subscription') : t('upgrade')}
+                                                    </Text>
+                                                </>
+                                            )}
+                                        </TouchableOpacity>
+                                    )}
+                                    <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} disabled={isLoggingOut}>
+                                        {isLoggingOut ? (
+                                            <ActivityIndicator size="small" color="#ef4444" />
+                                        ) : (
+                                            <>
+                                                <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+                                                <Text style={styles.logoutText}>{t('logout')}</Text>
+                                            </>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         )}
 
@@ -605,15 +662,17 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                                 </TouchableOpacity>
                             </FeatureGate>
 
-                            <TouchableOpacity style={styles.menuItem} onPress={() => setIsFeaturesOpen(true)}>
-                                <View style={styles.menuLabel}>
-                                    <Ionicons name="options-outline" size={22} color="#64748B" />
-                                    <Text style={styles.menuText}>{t('features') || "App Features"}</Text>
-                                </View>
-                                <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
-                            </TouchableOpacity>
+                            <FeatureGate feature="app_features" featureLabel="App Features">
+                                <TouchableOpacity style={styles.menuItem} onPress={() => setIsFeaturesOpen(true)}>
+                                    <View style={styles.menuLabel}>
+                                        <Ionicons name="options-outline" size={22} color="#64748B" />
+                                        <Text style={styles.menuText}>{t('features') || "App Features"}</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+                                </TouchableOpacity>
+                            </FeatureGate>
 
-                            <TouchableOpacity style={styles.menuItem} onPress={onFeedback}>
+                            <TouchableOpacity style={styles.menuItem} onPress={() => setIsFeedbackOpen(true)}>
                                 <View style={styles.menuLabel}>
                                     <Ionicons name="chatbubble-outline" size={22} color="#64748B" />
                                     <Text style={styles.menuText}>{t('send_feedback')}</Text>
@@ -621,25 +680,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                                 <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
                             </TouchableOpacity>
 
-                            {!user?.isGuest ? (
-                                <TouchableOpacity
-                                    style={styles.menuItem}
-                                    onPress={subscription ? handleManageSubscription : () => setUpgradeOpen(true)}
-                                    disabled={isLoading}
-                                >
-                                    <View style={styles.menuLabel}>
-                                        <Ionicons name="card-outline" size={22} color="#64748B" />
-                                        <Text style={styles.menuText}>
-                                            {subscription ? t('manage_subscription') : t('upgrade')}
-                                        </Text>
-                                    </View>
-                                    {isLoading ? (
-                                        <ActivityIndicator size="small" color="#d35457" />
-                                    ) : (
-                                        <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
-                                    )}
-                                </TouchableOpacity>
-                            ) : (
+                            {user?.isGuest && (
                                 <TouchableOpacity style={styles.menuItem} onPress={onAuthRequest}>
                                     <View style={styles.menuLabel}>
                                         <Ionicons name="card-outline" size={22} color="#64748B" />
@@ -667,47 +708,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                                 </TouchableOpacity>
                             )}
 
-                            {!user?.isGuest && (
-                                <>
-                                    <View style={styles.sectionHeader}>
-                                        <Ionicons name="shield-checkmark-outline" size={16} color="#10B981" />
-                                        <Text style={styles.sectionTitle}>{t('whitelisted_brands') || "WHITELISTED BRANDS"}</Text>
-                                    </View>
-                                    {isListsLoading ? (
-                                        <ActivityIndicator size="small" color="#10B981" style={{ marginVertical: 12 }} />
-                                    ) : whitelist.length > 0 ? (
-                                        whitelist.map(item => (
-                                            <View key={item.id} style={styles.listItem}>
-                                                <Text style={styles.listItemText}>{item.name}</Text>
-                                                <TouchableOpacity onPress={() => handleRemoveFromWhitelist(item.name)}>
-                                                    <Ionicons name="trash-outline" size={18} color="#94A3B8" />
-                                                </TouchableOpacity>
-                                            </View>
-                                        ))
-                                    ) : (
-                                        <Text style={styles.emptyListText}>No brands whitelisted</Text>
-                                    )}
 
-                                    <View style={styles.sectionHeader}>
-                                        <Ionicons name="ban-outline" size={16} color="#EF4444" />
-                                        <Text style={styles.sectionTitle}>{t('blocked_brands') || "BLOCKED BRANDS"}</Text>
-                                    </View>
-                                    {isListsLoading ? (
-                                        <ActivityIndicator size="small" color="#EF4444" style={{ marginVertical: 12 }} />
-                                    ) : blacklist.length > 0 ? (
-                                        blacklist.map(item => (
-                                            <View key={item.id} style={styles.listItem}>
-                                                <Text style={styles.listItemText}>{item.name}</Text>
-                                                <TouchableOpacity onPress={() => handleRemoveFromBlacklist(item.name)}>
-                                                    <Ionicons name="trash-outline" size={18} color="#94A3B8" />
-                                                </TouchableOpacity>
-                                            </View>
-                                        ))
-                                    ) : (
-                                        <Text style={styles.emptyListText}>No brands blocked</Text>
-                                    )}
-                                </>
-                            )}
 
                             <View style={styles.versionInfo}>
                                 <Text style={styles.versionText}>Made O&apos;Meter v3.2 (Mobile)</Text>
@@ -716,11 +717,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                     </View>
                 )}
             </ScrollView>
-            <UpgradeDialog
-                open={upgradeOpen}
-                onOpenChange={setUpgradeOpen}
-                currentPlan={plan}
-            />
+
             <LegalModal
                 isOpen={isLegalOpen}
                 onClose={() => setIsLegalOpen(false)}
@@ -731,8 +728,15 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                 preferences={preferences}
                 onToggle={onToggle}
             />
+            <FeedbackModal
+                isOpen={isFeedbackOpen}
+                onClose={() => setIsFeedbackOpen(false)}
+                onSubmit={handleFeedbackSubmit}
+                isSubmitting={isSubmittingFeedback}
+                userEmail={user?.email}
+            />
             {renderPicker()}
-        </SafeAreaView>
+        </View>
     );
 };
 
@@ -742,11 +746,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     header: {
-        paddingTop: Platform.OS === 'android' ? 40 : 10,
         paddingHorizontal: 20,
         backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#F1F5F9',
+        paddingTop: 10,
+        marginBottom: 15,
     },
     headerTop: {
         flexDirection: 'row',
@@ -755,8 +758,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
+        fontSize: 24,
+        fontWeight: '700',
         color: '#000',
     },
     closeBtn: {
@@ -818,6 +821,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E2E8F0',
         marginBottom: 24,
+        width: "83%"
     },
     searchInput: {
         flex: 1,
@@ -1105,12 +1109,44 @@ const styles = StyleSheet.create({
     logoutBtn: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: 8,
+        backgroundColor: '#FEF2F2',
+        paddingVertical: 12,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#FEE2E2',
+        width: "auto",
+        paddingLeft: 20,
+        paddingRight: 20
     },
     logoutText: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '700',
         color: '#ef4444',
+
+    },
+    userActions: {
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 4,
+    },
+    actionBtnSub: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        backgroundColor: '#fff',
+        paddingVertical: 12,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+    },
+    actionBtnText: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#1E293B',
     },
     menuSection: {
         gap: 12,
@@ -1179,7 +1215,6 @@ const styles = StyleSheet.create({
     searchRow: {
         flexDirection: 'row',
         gap: 10,
-        marginBottom: 24,
     },
     filterBtn: {
         width: 50,

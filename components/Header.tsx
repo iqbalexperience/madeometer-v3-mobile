@@ -1,7 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    Alert,
     Image,
     Modal,
     Platform,
@@ -9,9 +8,11 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
+import { useFeatureGate } from '../contexts/FeatureGateContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { FeatureKey } from '../lib/features';
 import { LanguageCode } from '../utils/translations';
 
 export const LANGUAGES: { code: LanguageCode; label: string; flag: string }[] = [
@@ -39,19 +40,22 @@ const Header: React.FC<HeaderProps> = ({ onHome, activeModel = 'madeometer-insta
     const [isLangOpen, setIsLangOpen] = useState(false);
     const [isModelOpen, setIsModelOpen] = useState(false);
     const { language, setLanguage, t } = useLanguage();
+    const { canAccess, openUpgradeDialog, plan: currentPlan } = useFeatureGate();
 
     const currentLang = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
     const safeModel = activeModel || 'madeometer-instant';
 
+    // Map internal model IDs to feature gating keys
+    const modelToFeature: Record<string, FeatureKey> = {
+        'madeometer-instant': 'ai_model_fast',
+        'madeometer-superfast': 'ai_model_superfast',
+        'gemini-3-flash-preview': 'ai_model_flash',
+    };
+
     const canUseModel = (modelId: string) => {
-        if (isAdmin) return true;
-        const plan = subscription?.plan || 'free';
-        // Basic gating: standard (instant) is for everyone, others for Plus/Personal
-        if (modelId === 'madeometer-instant') return true;
-        if (modelId === 'madeometer-superfast' || modelId === 'gemini-3-flash-preview') {
-            return plan === 'plus' || plan === 'personal';
-        }
-        return true;
+        const featureKey = modelToFeature[modelId];
+        if (!featureKey) return true;
+        return canAccess(featureKey);
     };
 
     const getBadgeStyles = () => {
@@ -82,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({ onHome, activeModel = 'madeometer-insta
                 {/* Logo & Plan */}
                 <TouchableOpacity onPress={onHome} style={styles.headerLeft}>
                     <Image
-                        source={require('../assets/images/icon.png')}
+                        source={require('../assets/images/adaptive-icon.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />
@@ -150,13 +154,13 @@ const Header: React.FC<HeaderProps> = ({ onHome, activeModel = 'madeometer-insta
                                     key={m.id}
                                     onPress={() => {
                                         if (!canUseModel(m.id)) {
-                                            Alert.alert("Upgrade Required", `The ${m.label} model is only available for Plus members.`);
+                                            setIsModelOpen(false);
+                                            openUpgradeDialog(`${m.label} Model`);
                                             return;
                                         }
                                         onModelChange(m.id);
                                         setIsModelOpen(false);
                                     }}
-                                    disabled={!canUseModel(m.id) && m.id !== safeModel}
                                     style={[
                                         styles.modelItem,
                                         safeModel === m.id && styles.modelItemActive,
@@ -298,11 +302,12 @@ const styles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.2)',
     },
     dropdownContent: {
+        position: 'absolute',
+        top: Platform.OS === 'ios' ? 60 : 68,
+        right: 20,
         width: 280,
         backgroundColor: '#fff',
         borderRadius: 20,

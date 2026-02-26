@@ -282,8 +282,6 @@ const styles = StyleSheet.create({
     mainCard: {
         flex: 1,
         backgroundColor: '#fff',
-        borderTopLeftRadius: 32,
-        borderTopRightRadius: 32,
         padding: 24,
     },
     analyzingOverlay: {

@@ -140,10 +140,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "App Language",
     currency: "Currency",
     shopping_location: "Shopping Location",
+    logout: "Logout",
     manage_subscription: "Manage Subscription",
     free_member: "Free Member",
     plus_member: "Plus Member",
-    personal_member: "Personal Member",
 
     // Cart
     multi_result: "Multi Product Results",
@@ -374,10 +374,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "App Sprog",
     currency: "Valuta",
     shopping_location: "Shopping Lokation",
-    manage_subscription: "Håndtér abonnement",
-    free_member: "Gratis Medlem",
-    plus_member: "Plus Medlem",
-    personal_member: "Personal Medlem",
+    logout: "Log ud",
+    manage_subscription: "Administrer abonnement",
+    free_member: "Gratis medlem",
+    plus_member: "Plus-medlem",
 
     // Cart
     multi_result: "Flere Resultater",
@@ -613,6 +613,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "App-Sprache",
     currency: "Währung",
     shopping_location: "Einkaufsstandort",
+    logout: "Abmelden",
+    manage_subscription: "Abonnement verwalten",
+    free_member: "Kostenloses Mitglied",
+    plus_member: "Plus-Mitglied",
 
     // Cart
     multi_result: "Ergebnisse für mehrere Produkte",
@@ -848,6 +852,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "Idioma de la aplicación",
     currency: "Moneda",
     shopping_location: "Ubicación de compra",
+    logout: "Cerrar sesión",
+    manage_subscription: "Gestionar suscripción",
+    free_member: "Miembro gratuito",
+    plus_member: "Miembro Plus",
 
     // Cart
     multi_result: "Resultados multi-producto",
@@ -1083,6 +1091,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "Langue de l'application",
     currency: "Devise",
     shopping_location: "Lieu d'achat",
+    logout: "Déconnexion",
+    manage_subscription: "Gérer l'abonnement",
+    free_member: "Membre gratuit",
+    plus_member: "Membre Plus",
 
     // Cart
     multi_result: "Résultats multi-produits",
@@ -1318,6 +1330,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "Lingua dell'app",
     currency: "Valuta",
     shopping_location: "Luogo di acquisto",
+    logout: "Esci",
+    manage_subscription: "Gestisci abbonamento",
+    free_member: "Membro gratuito",
+    plus_member: "Membro Plus",
 
     // Cart
     multi_result: "Risultati multi-prodotto",
@@ -1553,6 +1569,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "App-taal",
     currency: "Valuta",
     shopping_location: "Winkellocatie",
+    logout: "Uitloggen",
+    manage_subscription: "Abonnement beheren",
+    free_member: "Gratis lid",
+    plus_member: "Plus-lid",
 
     // Cart
     multi_result: "Resultaten voor meerdere producten",
@@ -1788,6 +1808,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "Appspråk",
     currency: "Valuta",
     shopping_location: "Shoppingplats",
+    logout: "Logga ut",
+    manage_subscription: "Hantera prenumeration",
+    free_member: "Gratismedlem",
+    plus_member: "Plus-medlem",
 
     // Cart
     multi_result: "Resultat för flera produkter",
@@ -2023,6 +2047,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "App-språk",
     currency: "Valuta",
     shopping_location: "Handlingssted",
+    logout: "Logg ut",
+    manage_subscription: "Administrer abonnement",
+    free_member: "Gratis medlem",
+    plus_member: "Plus-medlem",
 
     // Cart
     multi_result: "Resultater for flere produkter",
@@ -2258,6 +2286,10 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     app_language: "Idioma do App",
     currency: "Moeda",
     shopping_location: "Local de Compras",
+    logout: "Sair",
+    manage_subscription: "Gerenciar assinatura",
+    free_member: "Membro Grátis",
+    plus_member: "Membro Plus",
 
     // Cart
     multi_result: "Resultados Multi-Produtos",

@@ -2,13 +2,13 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
     Modal,
-    SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
     View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface LegalModalProps {
@@ -30,7 +30,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose }) => {
     return (
         <Modal
             visible={isOpen}
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             onRequestClose={onClose}
         >

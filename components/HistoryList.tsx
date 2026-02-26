@@ -14,7 +14,7 @@ import { useFeatureGate } from '../contexts/FeatureGateContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ScanResult } from '../types';
 import { FeatureGate } from './FeatureGate';
-import { UpgradeDialog } from './UpgradeDialog';
+// Removed redundant UpgradeDialog import
 
 interface HistoryListProps {
     history: ScanResult[];
@@ -34,10 +34,10 @@ const HistoryList: React.FC<HistoryListProps> = ({
     isLoading
 }) => {
     const { t } = useLanguage();
-    const { isWithinLimit, plan } = useFeatureGate();
+    const { isWithinLimit, plan, openUpgradeDialog } = useFeatureGate();
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set());
-    const [upgradeOpen, setUpgradeOpen] = useState(false);
+    // Removed local upgradeOpen state
     const [visibleCount, setVisibleCount] = useState(10);
 
     const filteredHistory = useMemo(() => {
@@ -85,7 +85,7 @@ const HistoryList: React.FC<HistoryListProps> = ({
             <View key={item.id} style={styles.itemWrapper}>
                 <TouchableOpacity
                     style={[styles.card, isGrouped && styles.subCard, locked && styles.lockedCard]}
-                    onPress={() => locked ? setUpgradeOpen(true) : onSelect(item)}
+                    onPress={() => locked ? openUpgradeDialog("Unlimited History") : onSelect(item)}
                     activeOpacity={0.7}
                 >
                     <Image source={{ uri: item.imageUrl }} style={isGrouped ? styles.subImage : styles.cardImage} />
@@ -136,7 +136,7 @@ const HistoryList: React.FC<HistoryListProps> = ({
                 <FeatureGate feature="multi_product_scan" featureLabel="Multi-Product Scan">
                     <TouchableOpacity
                         style={styles.groupHeader}
-                        onPress={() => historyLocked ? setUpgradeOpen(true) : toggleGroup(timestamp)}
+                        onPress={() => historyLocked ? openUpgradeDialog("Unlimited History") : toggleGroup(timestamp)}
                         activeOpacity={0.7}
                     >
                         <View style={styles.groupImageStack}>
@@ -253,12 +253,6 @@ const HistoryList: React.FC<HistoryListProps> = ({
                 />
             )}
 
-            <UpgradeDialog
-                open={upgradeOpen}
-                onOpenChange={setUpgradeOpen}
-                currentPlan={plan}
-                featureLabel="Unlimited History"
-            />
         </View>
     );
 };

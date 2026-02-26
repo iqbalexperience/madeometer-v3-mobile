@@ -1,17 +1,17 @@
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { Preference, UserProfile } from '../types';
-import { Shield, Leaf, XCircle, Droplets, Rabbit, Info, BarChart3, Landmark, ArrowLeft, Globe, User, LogOut, Settings, ChevronRight, ShieldAlert, Plus, Trash2, Sparkles, X, Edit2, Check, Save, Lock, MessageSquare, SlidersHorizontal, UserCircle, LayoutGrid, Zap, Languages, DollarSign, MapPin, Search, CreditCard, ExternalLink, Filter } from 'lucide-react';
-import LegalModal from './LegalModal';
-import AppFeaturesModal from './AppFeaturesModal';
-import { useLanguage } from '../contexts/LanguageContext';
-import { LanguageCode } from '../utils/translations';
 import { authClient } from '@/lib/auth-client';
+import { ArrowLeft, ChevronRight, CreditCard, DollarSign, Droplets, Edit2, Filter, Globe, Info, Languages, LayoutGrid, Leaf, LogOut, MapPin, MessageSquare, Plus, Save, Search, Settings, Shield, ShieldAlert, SlidersHorizontal, Sparkles, Trash2, User, UserCircle, X, XCircle } from 'lucide-react';
+import Link from 'next/link';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { FeatureGate } from './FeatureGate';
-import AuthModal from './AuthModal';
 import { useFeatureGate } from '../contexts/FeatureGateContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { Preference, UserProfile } from '../types';
+import { LanguageCode } from '../utils/translations';
+import AppFeaturesModal from './AppFeaturesModal';
+import AuthModal from './AuthModal';
+import { FeatureGate } from './FeatureGate';
+import LegalModal from './LegalModal';
 
 
 interface ProfileViewProps {
@@ -374,7 +374,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
                                             type="text"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            placeholder={t('search_rules') || "Search rules..."}
+                                            placeholder={t('search_rules')}
                                             className="w-full pl-11 pr-10 py-3.5 bg-gray-50 border border-transparent rounded-2xl text-[13px] font-bold focus:outline-none focus:bg-white focus:border-brand/20 focus:ring-4 focus:ring-brand/5 transition-all text-gray-900 placeholder:text-gray-400 placeholder:font-medium shadow-sm"
                                         />
                                         {searchTerm && (

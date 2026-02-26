@@ -69,7 +69,7 @@ export type FeatureAccessConfig = Record<FeatureKey, GateMode>;
 export const PLAN_FEATURE_ACCESS: Record<PlanName, FeatureAccessConfig> = {
     free: {
         ai_model_fast: 'allow',
-        ai_model_superfast: 'allow',
+        ai_model_superfast: 'lock',
         ai_model_flash: 'lock',
         scan_input: 'allow',
         upload_input: 'allow',

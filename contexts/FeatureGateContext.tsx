@@ -19,6 +19,7 @@ import React, {
     useState,
     type ReactNode,
 } from 'react';
+import { UpgradeDialog } from '../components/UpgradeDialog';
 
 interface FeatureGateContextValue {
     plan: PlanName;
@@ -33,13 +34,6 @@ interface FeatureGateContextValue {
 
 const FeatureGateContext = createContext<FeatureGateContextValue | undefined>(undefined);
 
-// Callback ref to allow UpgradeDialog to register itself
-let upgradeDialogCallback: ((featureLabel?: string) => void) | null = null;
-
-export function registerUpgradeDialogCallback(cb: ((featureLabel?: string) => void) | null) {
-    upgradeDialogCallback = cb;
-}
-
 export function FeatureGateProvider({ children }: { children: ReactNode }) {
     const { data: session, isPending: sessionLoading } = authClient.useSession();
 
@@ -47,8 +41,13 @@ export function FeatureGateProvider({ children }: { children: ReactNode }) {
     const [subscriptionLoading, setSubscriptionLoading] = useState(false);
     const [overridePlan, setOverridePlan] = useState<PlanName | null>(null);
 
+    // ── Global UpgradeDialog state ──────────────────────────────────────────
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogFeatureLabel, setDialogFeatureLabel] = useState<string | undefined>(undefined);
+
     const openUpgradeDialog = useCallback((featureLabel?: string) => {
-        upgradeDialogCallback?.(featureLabel);
+        setDialogFeatureLabel(featureLabel);
+        setDialogOpen(true);
     }, []);
 
     // Allow external code (e.g. home screen after API sub fetch) to push plan in
@@ -113,6 +112,12 @@ export function FeatureGateProvider({ children }: { children: ReactNode }) {
     return (
         <FeatureGateContext.Provider value={value}>
             {children}
+            <UpgradeDialog
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+                currentPlan={plan}
+                featureLabel={dialogFeatureLabel}
+            />
         </FeatureGateContext.Provider>
     );
 }

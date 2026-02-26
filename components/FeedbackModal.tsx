@@ -12,6 +12,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface FeedbackModalProps {
     isOpen: boolean;
@@ -30,6 +31,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
     context = 'GENERAL',
     userEmail
 }) => {
+    const { t } = useLanguage();
     const [type, setType] = useState(context === 'SCAN' ? 'INACCURATE_RESULT' : 'GENERAL');
     const [message, setMessage] = useState('');
     const [email, setEmail] = useState(userEmail || '');
@@ -46,20 +48,20 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
     return (
         <Modal
             visible={isOpen}
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             onRequestClose={onClose}
         >
             <View style={styles.overlay}>
                 <TouchableOpacity style={styles.dismiss} onPress={onClose} activeOpacity={1} />
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                     style={styles.container}
                 >
                     <View style={styles.content}>
                         <View style={styles.header}>
                             <Text style={styles.title}>
-                                {context === 'SCAN' ? 'Report Issue' : 'Send Feedback'}
+                                {context === 'SCAN' ? t('report_issue') : t('send_feedback_title')}
                             </Text>
                             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                                 <Ionicons name="close" size={24} color="#94A3B8" />
@@ -68,7 +70,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
                         <ScrollView showsVerticalScrollIndicator={false}>
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>CATEGORY</Text>
+                                <Text style={styles.label}>{t('category').toUpperCase()}</Text>
                                 <View style={styles.typeGrid}>
                                     {context === 'SCAN' ? (
                                         <TouchableOpacity
@@ -76,7 +78,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                                             onPress={() => setType('INACCURATE_RESULT')}
                                         >
                                             <Ionicons name="alert-circle-outline" size={20} color={type === 'INACCURATE_RESULT' ? '#d35457' : '#94A3B8'} />
-                                            <Text style={[styles.typeText, type === 'INACCURATE_RESULT' && styles.typeTextActive]}>Wrong Info</Text>
+                                            <Text style={[styles.typeText, type === 'INACCURATE_RESULT' && styles.typeTextActive]}>{t('wrong_info')}</Text>
                                         </TouchableOpacity>
                                     ) : (
                                         <TouchableOpacity
@@ -84,7 +86,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                                             onPress={() => setType('GENERAL')}
                                         >
                                             <Ionicons name="chatbubble-outline" size={20} color={type === 'GENERAL' ? '#3B82F6' : '#94A3B8'} />
-                                            <Text style={[styles.typeText, type === 'GENERAL' && styles.typeTextActive]}>General</Text>
+                                            <Text style={[styles.typeText, type === 'GENERAL' && styles.typeTextActive]}>{t('general')}</Text>
                                         </TouchableOpacity>
                                     )}
                                     <TouchableOpacity
@@ -92,7 +94,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                                         onPress={() => setType('BUG')}
                                     >
                                         <Ionicons name="bug-outline" size={20} color={type === 'BUG' ? '#F59E0B' : '#94A3B8'} />
-                                        <Text style={[styles.typeText, type === 'BUG' && styles.typeTextActive]}>App Bug</Text>
+                                        <Text style={[styles.typeText, type === 'BUG' && styles.typeTextActive]}>{t('app_bug')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TouchableOpacity
@@ -100,19 +102,19 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                                     onPress={() => setType('FEATURE_REQUEST')}
                                 >
                                     <Ionicons name="bulb-outline" size={20} color={type === 'FEATURE_REQUEST' ? '#8B5CF6' : '#94A3B8'} />
-                                    <Text style={[styles.typeText, type === 'FEATURE_REQUEST' && styles.typeTextActive]}>Feature Request</Text>
+                                    <Text style={[styles.typeText, type === 'FEATURE_REQUEST' && styles.typeTextActive]}>{t('feature_request')}</Text>
                                 </TouchableOpacity>
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>EMAIL ADDRESS</Text>
+                                <Text style={styles.label}>{t('email').toUpperCase()}</Text>
                                 <View style={styles.inputWrapper}>
                                     <Ionicons name="mail-outline" size={18} color="#94A3B8" style={styles.inputIcon} />
                                     <TextInput
                                         style={styles.input}
                                         value={email}
                                         onChangeText={setEmail}
-                                        placeholder="your@email.com"
+                                        placeholder={t('email_placeholder')}
                                         keyboardType="email-address"
                                         autoCapitalize="none"
                                     />
@@ -120,12 +122,12 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>MESSAGE</Text>
+                                <Text style={styles.label}>{t('message').toUpperCase()}</Text>
                                 <TextInput
                                     style={styles.textarea}
                                     value={message}
                                     onChangeText={setMessage}
-                                    placeholder="Describe the issue or share your thoughts..."
+                                    placeholder={t('describe_issue')}
                                     multiline
                                     numberOfLines={5}
                                     textAlignVertical="top"
@@ -138,11 +140,14 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                                 disabled={!message.trim() || isSubmitting}
                             >
                                 {isSubmitting ? (
-                                    <ActivityIndicator color="#fff" />
+                                    <>
+                                        <ActivityIndicator color="#fff" />
+                                        <Text style={styles.submitText}>{t('sending')}</Text>
+                                    </>
                                 ) : (
                                     <>
                                         <Ionicons name="send" size={18} color="#fff" />
-                                        <Text style={styles.submitText}>Submit Feedback</Text>
+                                        <Text style={styles.submitText}>{t('submit_feedback')}</Text>
                                     </>
                                 )}
                             </TouchableOpacity>

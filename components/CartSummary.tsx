@@ -11,7 +11,7 @@ import {
 import { useFeatureGate } from '../contexts/FeatureGateContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Preference, ScanResult } from '../types';
-import { UpgradeDialog } from './UpgradeDialog';
+// Removed redundant UpgradeDialog import
 
 // const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -31,7 +31,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
     activePreferences = []
 }) => {
     const [activeFilter, setActiveFilter] = useState<FilterType>('ALL');
-    const [upgradeOpen, setUpgradeOpen] = useState(false);
+    // Removed local upgradeOpen state
     const { t } = useLanguage();
     const { isWithinLimit, plan, canAccess, openUpgradeDialog } = useFeatureGate();
 
@@ -87,7 +87,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                     { top: `${top}%`, left: `${left}%` }
                 ]}
                 onPress={() => {
-                    if (dotLocked) { setUpgradeOpen(true); return; }
+                    if (dotLocked) { openUpgradeDialog("Multi-Product Scan"); return; }
                     onSelectResult(item);
                 }}
             >
@@ -194,7 +194,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                             return (
                                 <View key={item.id} style={styles.itemWrapper}>
                                     <TouchableOpacity
-                                        onPress={() => locked ? setUpgradeOpen(true) : onSelectResult(item)}
+                                        onPress={() => locked ? openUpgradeDialog("Multi-Product Scan") : onSelectResult(item)}
                                         style={[containerStyle, locked && styles.lockedItem]}
                                         activeOpacity={0.7}
                                     >
@@ -224,7 +224,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                                     {locked && (
                                         <TouchableOpacity
                                             style={styles.lockOverlay}
-                                            onPress={() => setUpgradeOpen(true)}
+                                            onPress={() => openUpgradeDialog("Multi-Product Scan")}
                                             activeOpacity={1}
                                         >
                                             <Ionicons name="lock-closed" size={16} color="#64748B" />
@@ -238,13 +238,6 @@ const CartSummary: React.FC<CartSummaryProps> = ({
 
                 <View style={styles.footerSpacing} />
             </ScrollView>
-
-            <UpgradeDialog
-                open={upgradeOpen}
-                onOpenChange={setUpgradeOpen}
-                currentPlan={plan}
-                featureLabel="Multi-Product Scan"
-            />
         </View>
     );
 };
@@ -253,8 +246,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
     },
     header: {
         flexDirection: 'row',

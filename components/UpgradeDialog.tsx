@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
+    ActivityIndicator,
     Dimensions,
     Linking,
     Modal,
@@ -12,8 +13,9 @@ import {
     View
 } from 'react-native';
 import { useLanguage } from '../contexts/LanguageContext';
-import { authClient } from '../lib/auth-client';
+import { authClient, signIn, signUp } from '../lib/auth-client';
 import { PlanName, PLANS } from '../lib/features';
+import AuthModal from './AuthModal';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -50,24 +52,25 @@ export function UpgradeDialog({
     const { data: session } = authClient.useSession();
     const [isAnnual, setIsAnnual] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showAuth, setShowAuth] = useState(false);
 
     if (!open) return null;
 
     const isAnonymous = !session?.user || session.user.isAnonymous;
     const isAlreadyPlus = currentPlan === "plus";
-    const close = () => onOpenChange(false);
+    const close = () => {
+        onOpenChange(false);
+        setShowAuth(false);
+    };
 
     const handleUpgrade = async () => {
         if (isAnonymous) {
-            // In a real app, you'd navigate to Auth or open AuthModal
-            // For now, let's just close and maybe the caller handles it
-            close();
+            setShowAuth(true);
             return;
         }
 
         setIsLoading(true);
         try {
-            // Mobile upgrade usually goes through IAP or a web-checkout session
             const { data, error } = await authClient.subscription.upgrade({
                 plan: "plus",
                 annual: isAnnual,
@@ -87,12 +90,30 @@ export function UpgradeDialog({
         }
     };
 
+    if (showAuth) {
+        return (
+            <AuthModal
+                visible={open}
+                onClose={() => setShowAuth(false)}
+                onLogin={async (email, password) => {
+                    await signIn.email({ email, password });
+                    setShowAuth(false);
+                }}
+                onRegister={async (name, email, password) => {
+                    await signUp.email({ name, email, password });
+                    setShowAuth(false);
+                }}
+            />
+        );
+    }
+
     return (
         <Modal
             visible={open}
             transparent
-            animationType="slide"
+            animationType="fade"
             onRequestClose={close}
+            statusBarTranslucent
         >
             <View style={styles.overlay}>
                 <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={close} />
@@ -104,104 +125,134 @@ export function UpgradeDialog({
                     </TouchableOpacity>
 
                     <ScrollView style={styles.scrollBody} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                        <View style={styles.header}>
-                            <View style={styles.rocketIcon}>
-                                <Ionicons name="rocket" size={32} color="#fff" />
-                            </View>
-                            <Text style={styles.title}>
-                                {isAlreadyPlus
-                                    ? t('upgrade_current_plus_title')
-                                    : featureLabel
+                        {isAnonymous ? (
+                            <View style={[styles.header, { paddingTop: 10 }]}>
+                                <View style={styles.rocketIcon}>
+                                    <Ionicons name="rocket" size={32} color="#fff" />
+                                </View>
+                                <Text style={styles.title}>
+                                    {featureLabel
                                         ? t('upgrade_unlock_feature').replace('{feature}', featureLabel)
                                         : t('upgrade_title')}
-                            </Text>
-                            <Text style={styles.desc}>
-                                {isAlreadyPlus
-                                    ? t('upgrade_current_plus_desc')
-                                    : t('upgrade_plus_desc')}
-                            </Text>
-                        </View>
-
-                        {!isAlreadyPlus && (
-                            <View style={styles.benefitsSection}>
-                                <Text style={styles.sectionLabel}>{t('upgrade_unlock_header')}</Text>
-                                {PLUS_BENEFITS.map(({ titleKey, subKey }) => (
-                                    <View key={titleKey} style={styles.benefitRow}>
-                                        <View style={styles.benefitIconBg}>
-                                            <Ionicons name={BENEFIT_ICONS[titleKey]} size={18} color="#fff" />
-                                        </View>
-                                        <View style={styles.benefitText}>
-                                            <Text style={styles.benefitTitle}>{t(titleKey)}</Text>
-                                            <Text style={styles.benefitSub}>{t(subKey)}</Text>
-                                        </View>
-                                        <View style={styles.checkCircle}>
-                                            <Ionicons name="checkmark" size={12} color="#fff" />
-                                        </View>
-                                    </View>
-                                ))}
-                            </View>
-                        )}
-
-                        {!isAlreadyPlus && (
-                            <View style={styles.billingCard}>
-                                <View>
-                                    <Text style={styles.sectionLabel}>{t('billing_cycle')}</Text>
-                                    <View style={styles.priceRow}>
-                                        <Text style={[styles.priceText, !isAnnual && styles.priceActive]}>$4.99/mo</Text>
-                                        <Text style={styles.dot}>·</Text>
-                                        <View style={styles.annualPriceRow}>
-                                            <Text style={[styles.priceText, isAnnual && styles.priceActive]}>$47.90/yr</Text>
-                                            <View style={styles.saveBadge}>
-                                                <Text style={styles.saveBadgeText}>{t('save_20')}</Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                                <TouchableOpacity
-                                    style={[styles.toggle, isAnnual && styles.toggleActive]}
-                                    onPress={() => setIsAnnual(!isAnnual)}
-                                    activeOpacity={0.8}
-                                >
-                                    <View style={[styles.toggleThumb, isAnnual && styles.toggleThumbActive]} />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-
-                        <View style={styles.planBadge}>
-                            <View>
-                                <Text style={styles.sectionLabel}>{t('current_plan')}</Text>
-                                <Text style={styles.planTitle}>{PLANS[currentPlan]?.title || 'Free'}</Text>
-                            </View>
-                            {!isAlreadyPlus && (
-                                <View style={styles.upgradeIndicator}>
-                                    <Ionicons name="arrow-forward" size={14} color="#fff" />
-                                    <Text style={styles.upgradeIndicatorText}>{PLANS.plus.title}</Text>
-                                </View>
-                            )}
-                        </View>
-
-                        <View style={styles.actions}>
-                            {isAlreadyPlus ? (
-                                <TouchableOpacity style={styles.primaryBtn} onPress={close}>
-                                    <Text style={styles.primaryBtnText}>{t('got_it')}</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <>
-                                    <TouchableOpacity
-                                        style={styles.primaryBtn}
-                                        onPress={handleUpgrade}
-                                        disabled={isLoading}
-                                    >
-                                        <Text style={styles.primaryBtnText}>
-                                            {isLoading ? t('processing') : t('upgrade_btn_total').replace('{price}', isAnnual ? "$47.90/yr" : "$4.99/mo")}
-                                        </Text>
+                                </Text>
+                                <Text style={styles.desc}>
+                                    {t('upgrade_anon_desc') ?? "Please sign in to access premium features and manage your subscriptions."}
+                                </Text>
+                                <View style={[styles.actions, { marginTop: 24, width: '100%' }]}>
+                                    <TouchableOpacity style={styles.primaryBtn} onPress={() => setShowAuth(true)}>
+                                        <Text style={styles.primaryBtnText}>{t('upgrade_signin_btn') ?? "Sign In to Unlock"}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.secondaryBtn} onPress={close}>
                                         <Text style={styles.secondaryBtnText}>{t('maybe_later')}</Text>
                                     </TouchableOpacity>
-                                </>
-                            )}
-                        </View>
+                                </View>
+                            </View>
+                        ) : (
+                            <>
+                                <View style={styles.header}>
+                                    <View style={styles.rocketIcon}>
+                                        <Ionicons name="rocket" size={32} color="#fff" />
+                                    </View>
+                                    <Text style={styles.title}>
+                                        {isAlreadyPlus
+                                            ? t('upgrade_current_plus_title')
+                                            : featureLabel
+                                                ? t('upgrade_unlock_feature').replace('{feature}', featureLabel)
+                                                : t('upgrade_title')}
+                                    </Text>
+                                    <Text style={styles.desc}>
+                                        {isAlreadyPlus
+                                            ? t('upgrade_current_plus_desc')
+                                            : t('upgrade_plus_desc')}
+                                    </Text>
+                                </View>
+
+                                {!isAlreadyPlus && (
+                                    <View style={styles.benefitsSection}>
+                                        <Text style={styles.sectionLabel}>{t('upgrade_unlock_header')}</Text>
+                                        {PLUS_BENEFITS.map(({ titleKey, subKey }) => (
+                                            <View key={titleKey} style={styles.benefitRow}>
+                                                <View style={styles.benefitIconBg}>
+                                                    <Ionicons name={BENEFIT_ICONS[titleKey]} size={18} color="#fff" />
+                                                </View>
+                                                <View style={styles.benefitText}>
+                                                    <Text style={styles.benefitTitle}>{t(titleKey)}</Text>
+                                                    <Text style={styles.benefitSub}>{t(subKey)}</Text>
+                                                </View>
+                                                <View style={styles.checkCircle}>
+                                                    <Ionicons name="checkmark" size={12} color="#fff" />
+                                                </View>
+                                            </View>
+                                        ))}
+                                    </View>
+                                )}
+
+                                {!isAlreadyPlus && (
+                                    <View style={styles.billingCard}>
+                                        <View>
+                                            <Text style={styles.sectionLabel}>{t('billing_cycle')}</Text>
+                                            <View style={styles.priceRow}>
+                                                <Text style={[styles.priceText, !isAnnual && styles.priceActive]}>$4.99/mo</Text>
+                                                <Text style={styles.dot}>·</Text>
+                                                <View style={styles.annualPriceRow}>
+                                                    <Text style={[styles.priceText, isAnnual && styles.priceActive]}>$47.90/yr</Text>
+                                                    <View style={styles.saveBadge}>
+                                                        <Text style={styles.saveBadgeText}>{t('save_20')}</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </View>
+                                        <TouchableOpacity
+                                            style={[styles.toggle, isAnnual && styles.toggleActive]}
+                                            onPress={() => setIsAnnual(!isAnnual)}
+                                            activeOpacity={0.8}
+                                        >
+                                            <View style={[styles.toggleThumb, isAnnual && styles.toggleThumbActive]} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+
+                                <View style={styles.planBadge}>
+                                    <View>
+                                        <Text style={styles.sectionLabel}>{t('current_plan')}</Text>
+                                        <Text style={styles.planTitle}>{PLANS[currentPlan]?.title || 'Free'}</Text>
+                                    </View>
+                                    {!isAlreadyPlus && (
+                                        <View style={styles.upgradeIndicator}>
+                                            <Ionicons name="arrow-forward" size={14} color="#fff" />
+                                            <Text style={styles.upgradeIndicatorText}>{PLANS.plus.title}</Text>
+                                        </View>
+                                    )}
+                                </View>
+
+                                <View style={styles.actions}>
+                                    {isAlreadyPlus ? (
+                                        <TouchableOpacity style={styles.primaryBtn} onPress={close}>
+                                            <Text style={styles.primaryBtnText}>{t('got_it')}</Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <>
+                                            <TouchableOpacity
+                                                style={styles.primaryBtn}
+                                                onPress={handleUpgrade}
+                                                disabled={isLoading}
+                                            >
+                                                {isLoading ? (
+                                                    <ActivityIndicator color="#fff" size="small" />
+                                                ) : (
+                                                    <Text style={styles.primaryBtnText}>
+                                                        {t('upgrade_btn_total').replace('{price}', isAnnual ? "$47.90/yr" : "$4.99/mo")}
+                                                    </Text>
+                                                )}
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.secondaryBtn} onPress={close}>
+                                                <Text style={styles.secondaryBtnText}>{t('maybe_later')}</Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    )}
+                                </View>
+                            </>
+                        )}
                     </ScrollView>
                 </View>
             </View>
@@ -216,7 +267,7 @@ const styles = StyleSheet.create({
     },
     backdrop: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.6)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     sheet: {
         backgroundColor: '#fff',
