@@ -5,7 +5,7 @@ const BASE_URL = 'https://madeometer-v3-production.up.railway.app';
 /**
  * Generic Fetch Helper
  */
-async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
     const res = await fetch(`${BASE_URL}${path}`, {
         ...options,
         headers: {
@@ -260,4 +260,23 @@ export async function uploadFile(file: { name: string; type: string; uri: string
     }
 
     return publicUrl;
+}
+/**
+ * Supporters / Donations API
+ */
+export async function getSupporters(page: number = 1, pageSize: number = 5): Promise<{ supporters: any[]; total: number }> {
+    return apiFetch<{ supporters: any[]; total: number }>(`/api/madeometer/db/supporters?page=${page}&pageSize=${pageSize}`);
+}
+
+export async function createSupporter(data: {
+    name: string;
+    email: string;
+    amount: number;
+    currency: string;
+    comment?: string;
+}): Promise<{ id: string }> {
+    return apiFetch<{ id: string }>('/api/madeometer/db/supporters', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    });
 }

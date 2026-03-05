@@ -168,6 +168,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Welcome Back",
+    login_success: "Login successful",
     create_account: "Create Account",
     full_name: "Full Name",
     email: "Email Address",
@@ -402,6 +403,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Velkommen tilbage",
+    login_success: "Log ind lykkedes",
     create_account: "Opret Konto",
     full_name: "Fulde Navn",
     email: "Email Adresse",
@@ -637,6 +639,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Willkommen zurück",
+    login_success: "Anmeldung erfolgreich",
     create_account: "Konto erstellen",
     full_name: "Vollständiger Name",
     email: "E-Mail-Adresse",
@@ -872,6 +875,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bienvenido de nuevo",
+    login_success: "Inicio de sesión exitoso",
     create_account: "Crear cuenta",
     full_name: "Nombre completo",
     email: "Correo electrónico",
@@ -1107,6 +1111,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bon retour",
+    login_success: "Connexion réussie",
     create_account: "Créer un compte",
     full_name: "Nom complet",
     email: "Adresse e-mail",
@@ -1342,6 +1347,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bentornato",
+    login_success: "Accesso effettuato con successo",
     create_account: "Crea account",
     full_name: "Nome completo",
     email: "Indirizzo e-mail",
@@ -1577,6 +1583,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Welkom terug",
+    login_success: "Inloggen geslaagd",
     create_account: "Account aanmaken",
     full_name: "Volledige naam",
     email: "E-mailadres",
@@ -1812,6 +1819,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Välkommen tillbaka",
+    login_success: "Inloggningen lyckades",
     create_account: "Skapa konto",
     full_name: "Fullständigt namn",
     email: "E-postadress",
@@ -2047,6 +2055,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Velkommen tilbake",
+    login_success: "Innlogging vellykket",
     create_account: "Opprett konto",
     full_name: "Fullt navn",
     email: "E-postadresse",
@@ -2282,6 +2291,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bem-vindo de Volta",
+    login_success: "Login efetuado com sucesso",
     create_account: "Criar Conta",
     full_name: "Nome Completo",
     email: "Endereço de E-mail",

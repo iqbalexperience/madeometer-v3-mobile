@@ -1,7 +1,8 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
     Dimensions,
     Platform,
     ScrollView,
@@ -11,6 +12,8 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { createSupporter, getSupporters } from '../lib/api';
+import { useSession } from '../lib/auth-client';
 
 interface Donor {
     id: string;
@@ -27,21 +30,51 @@ interface CommunityViewProps {
 const { width } = Dimensions.get('window');
 
 const CommunityView: React.FC<CommunityViewProps> = ({ onClose }) => {
+    const { data: session } = useSession();
     const [selectedAmount, setSelectedAmount] = useState<number | 'custom'>(10);
     const [customAmount, setCustomAmount] = useState<string>('');
-    const [name, setName] = useState('');
+    const [name, setName] = useState(session?.user?.name || '');
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [donors, setDonors] = useState<Donor[]>([
-        { id: '1', name: "Elena K.", amount: 50, badge: "Legend", message: "Keep up the great work! 🌍" },
-        { id: '2', name: "Marcus T.", amount: 25, badge: "Supporter", message: "Love this app." },
-        { id: '3', name: "Sarah L.", amount: 20, badge: "Supporter" },
-        { id: '4', name: "David B.", amount: 15, badge: "Fan", message: "Transparency matters." },
-        { id: '5', name: "Jenny W.", amount: 10, badge: "Fan" },
-    ]);
+    const [donors, setDonors] = useState<Donor[]>([]);
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+    const [isLoadingInitial, setIsLoadingInitial] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-    const handleDonate = () => {
+    const fetchSupporters = async (pageNum: number, isMore: boolean = false) => {
+        try {
+            if (isMore) setIsLoadingMore(true);
+            const data = await getSupporters(pageNum, 5);
+            if (data.supporters) {
+                const mapped = data.supporters.map((s: any) => ({
+                    ...s,
+                    badge: s.amount >= 50 ? "Legend" : s.amount >= 20 ? "Supporter" : "Fan",
+                    message: s.comment
+                }));
+                setDonors(prev => isMore ? [...prev, ...mapped] : mapped);
+                setTotal(data.total);
+            }
+        } catch (err) {
+            console.error("Failed to fetch supporters:", err);
+        } finally {
+            setIsLoadingInitial(false);
+            setIsLoadingMore(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSupporters(1);
+    }, []);
+
+    const handleLoadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchSupporters(nextPage, true);
+    };
+
+    const handleDonate = async () => {
         setIsSubmitting(true);
         const finalAmount = selectedAmount === 'custom' ? parseFloat(customAmount) : selectedAmount;
         if (!finalAmount || finalAmount <= 0) {
@@ -49,25 +82,34 @@ const CommunityView: React.FC<CommunityViewProps> = ({ onClose }) => {
             return;
         }
 
-        // Simulate donation process
-        setTimeout(() => {
-            const newDonor: Donor = {
-                id: Date.now().toString(),
+        const donationAmount = finalAmount * 100;
+
+        try {
+            // 1. Save pending supporter to database
+            const supporter = await createSupporter({
                 name: name.trim() || "Anonymous",
+                email: session?.user?.email || "donor@example.com",
                 amount: finalAmount,
-                badge: finalAmount >= 50 ? "Legend" : finalAmount >= 20 ? "Supporter" : "Fan",
-                message: message.trim() || undefined
-            };
-            setDonors(prev => [newDonor, ...prev]);
+                currency: "EUR",
+                comment: message.trim() || undefined
+            });
+
+            if (supporter.id) {
+                // 2. Redirect to Stripe with client_reference_id for webhook tracking
+                const stripeUrl = `https://buy.stripe.com/test_bJe4gz2kS9iabIVauda7C02?client_reference_id=${supporter.id}&__prefilled_amount=${donationAmount}`;
+                WebBrowser.openBrowserAsync(stripeUrl).catch(err => console.error("Couldn't load page", err));
+            }
+        } catch (err) {
+            console.error("Donation initiation failed:", err);
+        } finally {
             setIsSubmitting(false);
             setMessage('');
-            setName('');
+            if (!session?.user) {
+                setName('');
+            }
             setSelectedAmount(10);
             setCustomAmount('');
-
-            // Just linking for demo
-            WebBrowser.openBrowserAsync('https://stripe.com').catch(err => console.error("Couldn't load page", err));
-        }, 1500);
+        }
     };
 
     return (
@@ -169,36 +211,56 @@ const CommunityView: React.FC<CommunityViewProps> = ({ onClose }) => {
                 </View>
 
                 <View style={styles.leaderboard}>
-                    {donors.map((donor, idx) => (
-                        <View key={donor.id} style={styles.donorCard}>
-                            <View style={styles.donorTop}>
-                                <View style={styles.donorInfo}>
-                                    <View style={[
-                                        styles.donorAvatar,
-                                        donor.amount >= 50 ? styles.avatarGold : donor.amount >= 20 ? styles.avatarPurple : null
-                                    ]}>
-                                        <Text style={[
-                                            styles.avatarText,
-                                            donor.amount >= 50 ? styles.textGold : donor.amount >= 20 ? styles.textPurple : null
-                                        ]}>{donor.name.charAt(0)}</Text>
+                    {isLoadingInitial ? (
+                        <ActivityIndicator size="large" color="#635BFF" style={{ marginVertical: 40 }} />
+                    ) : (
+                        <>
+                            {donors.map((donor, idx) => (
+                                <View key={donor.id} style={styles.donorCard}>
+                                    <View style={styles.donorTop}>
+                                        <View style={styles.donorInfo}>
+                                            <View style={[
+                                                styles.donorAvatar,
+                                                donor.amount >= 50 ? styles.avatarGold : donor.amount >= 20 ? styles.avatarPurple : null
+                                            ]}>
+                                                <Text style={[
+                                                    styles.avatarText,
+                                                    donor.amount >= 50 ? styles.textGold : donor.amount >= 20 ? styles.textPurple : null
+                                                ]}>{donor.name.charAt(0)}</Text>
+                                            </View>
+                                            <View>
+                                                <Text style={styles.donorName}>{donor.name}</Text>
+                                                <Text style={styles.donorBadge}>{donor.badge.toUpperCase()}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.amountBadge}>
+                                            <Text style={styles.amountBadgeText}>€{donor.amount}</Text>
+                                        </View>
                                     </View>
-                                    <View>
-                                        <Text style={styles.donorName}>{donor.name}</Text>
-                                        <Text style={styles.donorBadge}>{donor.badge.toUpperCase()}</Text>
-                                    </View>
+                                    {donor.message && (
+                                        <View style={styles.donorMessage}>
+                                            <View style={styles.messageTriangle} />
+                                            <Text style={styles.messageText}>&quot;{donor.message}&quot;</Text>
+                                        </View>
+                                    )}
                                 </View>
-                                <View style={styles.amountBadge}>
-                                    <Text style={styles.amountBadgeText}>€{donor.amount}</Text>
-                                </View>
-                            </View>
-                            {donor.message && (
-                                <View style={styles.donorMessage}>
-                                    <View style={styles.messageTriangle} />
-                                    <Text style={styles.messageText}>&quot;{donor.message}&quot;</Text>
-                                </View>
+                            ))}
+
+                            {donors.length < total && (
+                                <TouchableOpacity
+                                    style={styles.loadMoreBtn}
+                                    onPress={handleLoadMore}
+                                    disabled={isLoadingMore}
+                                >
+                                    {isLoadingMore ? (
+                                        <ActivityIndicator size="small" color="#64748B" />
+                                    ) : (
+                                        <Text style={styles.loadMoreText}>Load More</Text>
+                                    )}
+                                </TouchableOpacity>
                             )}
-                        </View>
-                    ))}
+                        </>
+                    )}
                 </View>
                 <View style={{ height: 100 }} />
             </View>
@@ -475,7 +537,22 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#475569',
         fontStyle: 'italic',
-    }
+    },
+    loadMoreBtn: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        marginTop: 8,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        backgroundColor: '#fff',
+    },
+    loadMoreText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#64748B',
+    },
 });
 
 export default CommunityView;

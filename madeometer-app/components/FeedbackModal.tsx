@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { X, Send, MessageSquare, AlertTriangle, Lightbulb, Bug, Mail } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
 import { useSession } from '@/lib/auth-client';
+import { AlertTriangle, Bug, Lightbulb, Mail, MessageSquare, Send, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface FeedbackModalProps {
     isOpen: boolean;
