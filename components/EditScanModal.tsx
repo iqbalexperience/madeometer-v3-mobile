@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ScanResult } from '../types';
 
 interface EditScanModalProps {
@@ -220,6 +221,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
     const [formData, setFormData] = useState<Partial<ScanResult>>({});
     const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const { t } = useLanguage();
 
     useEffect(() => {
         if (scanResult) {
@@ -276,7 +278,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                 >
                     <View style={styles.content}>
                         <View style={styles.header}>
-                            <Text style={styles.title}>Edit Details</Text>
+                            <Text style={styles.title}>{t('edit_details')}</Text>
                             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                                 <Ionicons name="close" size={24} color="#94A3B8" />
                             </TouchableOpacity>
@@ -284,7 +286,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
 
                         <ScrollView showsVerticalScrollIndicator={false} style={styles.form}>
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>STATUS</Text>
+                                <Text style={styles.label}>{t('status').toUpperCase()}</Text>
                                 <View style={styles.verdictGrid}>
                                     {(['RECOMMENDED', 'NEUTRAL', 'AVOID'] as const).map((v) => (
                                         <TouchableOpacity
@@ -301,14 +303,14 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                                             <Text style={[
                                                 styles.verdictText,
                                                 formData.verdict === v && styles.verdictTextActive
-                                            ]}>{v === 'RECOMMENDED' ? 'OK' : v}</Text>
+                                            ]}>{v === 'RECOMMENDED' ? t('verdict_safe').toUpperCase() : (v === 'NEUTRAL' ? t('verdict_neutral').toUpperCase() : t('verdict_avoid').toUpperCase())}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>PRODUCT NAME</Text>
+                                <Text style={styles.label}>{t('product_name').toUpperCase()}</Text>
                                 <View style={styles.inputWrapper}>
                                     <Ionicons name="cube-outline" size={18} color="#94A3B8" style={styles.inputIcon} />
                                     <TextInput
@@ -320,7 +322,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>OWNER COMPANY</Text>
+                                <Text style={styles.label}>{t('owner_company').toUpperCase()}</Text>
                                 <View style={styles.inputWrapper}>
                                     <Ionicons name="business-outline" size={18} color="#94A3B8" style={styles.inputIcon} />
                                     <TextInput
@@ -332,14 +334,14 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>OWNER COUNTRY</Text>
+                                <Text style={styles.label}>{t('country').toUpperCase()}</Text>
                                 <TouchableOpacity
                                     style={styles.inputWrapper}
                                     onPress={() => setIsCountryPickerOpen(true)}
                                 >
                                     <Text style={styles.flagDisplay}>{formData.ownerFlag || '🏳️'}</Text>
                                     <Text style={[styles.input, !formData.ownerCountry && { color: '#94A3B8' }]}>
-                                        {formData.ownerCountry || 'Select Country'}
+                                        {formData.ownerCountry || t('select_country')}
                                     </Text>
                                     <Ionicons name="chevron-down" size={18} color="#94A3B8" />
                                 </TouchableOpacity>
@@ -347,7 +349,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
 
                             <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
                                 <Ionicons name="save-outline" size={20} color="#fff" />
-                                <Text style={styles.saveText}>Save & Validate</Text>
+                                <Text style={styles.saveText}>{t('save_and_validate')}</Text>
                             </TouchableOpacity>
                             <View style={{ height: 40 }} />
                         </ScrollView>
@@ -358,7 +360,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
             {/* Nested Country Picker Modal */}
             <Modal
                 visible={isCountryPickerOpen}
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 onRequestClose={() => setIsCountryPickerOpen(false)}
             >
@@ -367,7 +369,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                     <View style={[styles.container, { maxHeight: '80%' }]}>
                         <View style={styles.content}>
                             <View style={styles.header}>
-                                <Text style={styles.title}>Select Country</Text>
+                                <Text style={styles.title}>{t('select_country')}</Text>
                                 <TouchableOpacity onPress={() => setIsCountryPickerOpen(false)} style={styles.closeBtn}>
                                     <Ionicons name="close" size={24} color="#94A3B8" />
                                 </TouchableOpacity>
@@ -377,7 +379,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                                 <Ionicons name="search" size={18} color="#94A3B8" />
                                 <TextInput
                                     style={styles.searchInput}
-                                    placeholder="Search country..."
+                                    placeholder={t('search_country_placeholder')}
                                     value={searchQuery}
                                     onChangeText={setSearchQuery}
                                     autoFocus
@@ -405,7 +407,7 @@ const EditScanModal: React.FC<EditScanModalProps> = ({ isOpen, onClose, onSave, 
                                 ))}
                                 {filteredCountries.length === 0 && (
                                     <View style={styles.emptySearch}>
-                                        <Text style={styles.emptySearchText}>No countries found</Text>
+                                        <Text style={styles.emptySearchText}>{t('no_countries_found')}</Text>
                                     </View>
                                 )}
                             </ScrollView>

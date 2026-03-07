@@ -221,6 +221,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Country",
     select_country: "Select Country",
     save_validate: "Save and Validate",
+    search_country_placeholder: "Search country...",
+    no_countries_found: "No countries found",
+    save_and_validate: "Save & Validate",
+    add_to_ok_whitelist: "Add to OK (Whitelist)",
+    block_blocklist: "Block (Blocklist)",
+    revert_to_ai_verdict: "Revert to AI Verdict",
 
     // Chat
     ai_assistant: "AI Assistent",
@@ -485,6 +491,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Land",
     select_country: "Vælg land",
     save_validate: "Gem & Valider",
+    search_country_placeholder: "Søg land...",
+    no_countries_found: "Ingen lande fundet",
+    save_and_validate: "Gem & Valider",
+    add_to_ok_whitelist: "Føj til OK (Tilladelsesliste)",
+    block_blocklist: "Bloker (Blokeringsliste)",
+    revert_to_ai_verdict: "Vend tilbage til AI-dom",
 
     // Chat
     ai_assistant: "AI Assistent",
@@ -754,6 +766,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Land",
     select_country: "Land wählen",
     save_validate: "Speichern & Validieren",
+    search_country_placeholder: "Land suchen...",
+    no_countries_found: "Keine Länder gefunden",
+    save_and_validate: "Speichern & Validieren",
+    add_to_ok_whitelist: "Zu OK hinzufügen (Whitelist)",
+    block_blocklist: "Blockieren (Blacklist)",
+    revert_to_ai_verdict: "Zurück zum AI-Urteil",
 
     // Chat
     ai_assistant: "KI-Assistent",
@@ -1023,6 +1041,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "País",
     select_country: "Seleccionar país",
     save_validate: "Guardar y validar",
+    search_country_placeholder: "Buscar país...",
+    no_countries_found: "No se encontraron países",
+    save_and_validate: "Guardar y validar",
+    add_to_ok_whitelist: "Agregar a OK (Lista permitida)",
+    block_blocklist: "Bloquear (Lista de bloqueo)",
+    revert_to_ai_verdict: "Revertir al veredicto de la IA",
 
     // Chat
     ai_assistant: "Asistente AI",
@@ -1292,6 +1316,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Pays",
     select_country: "Sélectionner le pays",
     save_validate: "Enregistrer et valider",
+    search_country_placeholder: "Rechercher un pays...",
+    no_countries_found: "Aucun pays trouvé",
+    save_and_validate: "Enregistrer et valider",
+    add_to_ok_whitelist: "Ajouter aux favoris (Whitelist)",
+    block_blocklist: "Bloquer (Blacklist)",
+    revert_to_ai_verdict: "Revenir au verdict de l'IA",
 
     // Chat
     ai_assistant: "Assistant IA",
@@ -1561,6 +1591,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Paese",
     select_country: "Seleziona paese",
     save_validate: "Salva e valida",
+    search_country_placeholder: "Cerca paese...",
+    no_countries_found: "Nessun paese trovato",
+    save_and_validate: "Salva e valida",
+    add_to_ok_whitelist: "Aggiungi a OK (Whitelist)",
+    block_blocklist: "Blocca (Blacklist)",
+    revert_to_ai_verdict: "Torna al verdetto dell'IA",
 
     // Chat
     ai_assistant: "Assistente IA",
@@ -1830,6 +1866,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Land",
     select_country: "Selecteer land",
     save_validate: "Opslaan & Valideren",
+    search_country_placeholder: "Land zoeken...",
+    no_countries_found: "Geen landen gevonden",
+    save_and_validate: "Opslaan & Valideren",
+    add_to_ok_whitelist: "Toevoegen aan OK (Whitelist)",
+    block_blocklist: "Blokkeren (Blacklist)",
+    revert_to_ai_verdict: "Terug naar AI-oordeel",
 
     // Chat
     ai_assistant: "AI Assistent",
@@ -2031,7 +2073,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Support / Community
     support_mission: "Stöd vårt uppdrag",
-    support_desc: "Hjälp oss att underhåpa databasen och hålla servrarna igång. Varje bidrag hjälper oss att avslöja sanningen.",
+    support_desc: "Hjälp oss att underhålla databasen och hålla servrarna igång. Varje bidrag hjälper oss att avslöja sanningen.",
     select_amount: "Välj belopp",
     custom: "Anpassat",
     enter_amount: "Ange belopp",
@@ -2099,6 +2141,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Land",
     select_country: "Välj land",
     save_validate: "Spara & Validera",
+    search_country_placeholder: "Sök land...",
+    no_countries_found: "Inga länder hittades",
+    save_and_validate: "Spara & Validera",
+    add_to_ok_whitelist: "Lägg till i OK (Whitelist)",
+    block_blocklist: "Blockera (Blacklist)",
+    revert_to_ai_verdict: "Återgå till AI-omdöme",
 
     // Chat
     ai_assistant: "AI Assistent",
@@ -2368,6 +2416,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     country: "Land",
     select_country: "Velg land",
     save_validate: "Lagre og valider",
+    search_country_placeholder: "Søk land...",
+    no_countries_found: "Ingen land funnet",
+    save_and_validate: "Lagre og valider",
+    add_to_ok_whitelist: "Legg till i OK (Whitelist)",
+    block_blocklist: "Blokker (Svarteliste)",
+    revert_to_ai_verdict: "Gå tilbake til AI-dom",
 
     // Chat
     ai_assistant: "AI-assistent",
@@ -2683,6 +2737,12 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     delete_failed: "Falha ao excluir digitalização.",
     error_title: "Erro",
     analysis_failed: "Análise falhou",
-    please_try_again: "Tente novamente."
+    please_try_again: "Tente novamente.",
+    search_country_placeholder: "Pesquisar país...",
+    no_countries_found: "Nenhum país encontrado",
+    save_and_validate: "Salvar e Validar",
+    add_to_ok_whitelist: "Adicionar a OK (Lista permitida)",
+    block_blocklist: "Bloquear (Lista negra)",
+    revert_to_ai_verdict: "Reverter para o veredito da IA"
   },
 };

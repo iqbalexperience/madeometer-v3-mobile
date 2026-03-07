@@ -345,7 +345,7 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                                                 onPress={() => handleAction('ALLOW')}
                                             >
                                                 <Ionicons name="checkmark-sharp" size={14} color="#059669" />
-                                                <Text style={styles.whitelistBtnText}>Add to OK (Whitelist)</Text>
+                                                <Text style={styles.whitelistBtnText}>{t('add_to_ok_whitelist')}</Text>
                                             </TouchableOpacity>
                                         </FeatureGate>
                                     )}
@@ -357,7 +357,7 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                                                 onPress={() => handleAction('BLOCK')}
                                             >
                                                 <Ionicons name="ban" size={14} color="#d35457" />
-                                                <Text style={styles.blocklistBtnText}>Block (Blocklist)</Text>
+                                                <Text style={styles.blocklistBtnText}>{t('block_blocklist')}</Text>
                                             </TouchableOpacity>
                                         </FeatureGate>
                                     )}
@@ -368,7 +368,7 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                                             onPress={handleRevert}
                                         >
                                             <Ionicons name="refresh-outline" size={14} color="#64748B" />
-                                            <Text style={styles.revertBtnText}>Revert to AI Verdict</Text>
+                                            <Text style={styles.revertBtnText}>{t('revert_to_ai_verdict')}</Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -415,186 +415,192 @@ const ScanResultCard: React.FC<ScanResultCardProps> = ({
                     </View>
                 </View>
 
-                {activeTab === 'overview' && (
-                    <View style={styles.overviewContainer}>
-                        {/* Owner Company Card */}
-                        <View style={styles.infoCard}>
-                            <View style={styles.infoCardHeader}>
-                                <Text style={styles.infoCardLabel}>{t('owner_company')}</Text>
-                                <View style={styles.infoCardActions}>
-                                    <TouchableOpacity style={styles.smallActionBtn} onPress={() => onReanalyze?.(result.id, 'gemini-3-flash-preview')}><Ionicons name="refresh-outline" size={16} color="#94A3B8" /></TouchableOpacity>
-                                    <TouchableOpacity style={styles.smallActionBtn} onPress={() => onEdit?.(result)}><Ionicons name="pencil" size={16} color="#94A3B8" /></TouchableOpacity>
-                                    <TouchableOpacity style={styles.smallActionBtn} onPress={() => onDelete?.(result.id)}><Ionicons name="trash-outline" size={16} color="#94A3B8" /></TouchableOpacity>
-                                </View>
-                            </View>
-                            <View style={styles.ownerContent}>
-                                <CountryFlag code={result.ownerCountryCode} style={styles.largeFlag} />
-                                <View style={styles.ownerTextCol}>
-                                    <Text style={styles.ownerCountryText}>{result.ownerCountry}</Text>
-                                    <TouchableOpacity
-                                        style={styles.ownerLinkRow}
-                                        onPress={async () => {
-                                            if (result.website) {
-                                                const url = result.website.startsWith('http') ? result.website : `https://${result.website}`;
-                                                await WebBrowser.openBrowserAsync(url);
-                                            }
-                                        }}
-                                        disabled={!result.website}
-                                    >
-                                        <Text style={styles.ownerLinkText}>{result.ownerCompany}</Text>
-                                        {result.website && <Ionicons name="link-outline" size={12} color="#3B82F6" />}
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Middle row: Political & Made In */}
-                        <View style={styles.rowGrid}>
-                            {showPoliticalMeter && (
-                                <View style={[styles.infoCard, { flex: 1 }]}>
-                                    <View style={styles.politicalHeader}>
-                                        <Ionicons name="scale-outline" size={14} color="#8B5CF6" />
-                                        <Text style={styles.politicalLabel}>{t('bipartisan')}</Text>
-                                    </View>
-                                    <View style={styles.politicalBarContainer}>
-                                        <View style={[styles.politicalGradient, { width: `${result.republicanScore || 50}%` }]} />
+                {
+                    activeTab === 'overview' && (
+                        <View style={styles.overviewContainer}>
+                            {/* Owner Company Card */}
+                            <View style={styles.infoCard}>
+                                <View style={styles.infoCardHeader}>
+                                    <Text style={styles.infoCardLabel}>{t('owner_company')}</Text>
+                                    <View style={styles.infoCardActions}>
+                                        <TouchableOpacity style={styles.smallActionBtn} onPress={() => onReanalyze?.(result.id, 'gemini-3-flash-preview')}><Ionicons name="refresh-outline" size={16} color="#94A3B8" /></TouchableOpacity>
+                                        <TouchableOpacity style={styles.smallActionBtn} onPress={() => onEdit?.(result)}><Ionicons name="pencil" size={16} color="#94A3B8" /></TouchableOpacity>
+                                        <TouchableOpacity style={styles.smallActionBtn} onPress={() => onDelete?.(result.id)}><Ionicons name="trash-outline" size={16} color="#94A3B8" /></TouchableOpacity>
                                     </View>
                                 </View>
-                            )}
-                            <View style={[styles.infoCard, { flex: 1 }]}>
-                                <Text style={styles.infoCardLabel}>{t('made_in')}</Text>
-                                <View style={styles.madeInRow}>
-                                    <Ionicons name="globe-outline" size={16} color="#3B82F6" />
-                                    <Text style={styles.madeInText}>{result.manufacturedIn || t('multiple_countries')}</Text>
+                                <View style={styles.ownerContent}>
+                                    <CountryFlag code={result.ownerCountryCode} style={styles.largeFlag} />
+                                    <View style={styles.ownerTextCol}>
+                                        <Text style={styles.ownerCountryText}>{result.ownerCountry}</Text>
+                                        <TouchableOpacity
+                                            style={styles.ownerLinkRow}
+                                            onPress={async () => {
+                                                if (result.website) {
+                                                    const url = result.website.startsWith('http') ? result.website : `https://${result.website}`;
+                                                    await WebBrowser.openBrowserAsync(url);
+                                                }
+                                            }}
+                                            disabled={!result.website}
+                                        >
+                                            <Text style={styles.ownerLinkText}>{result.ownerCompany}</Text>
+                                            {result.website && <Ionicons name="link-outline" size={12} color="#3B82F6" />}
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
 
-                        {/* About Card */}
-                        <View style={styles.infoCard}>
-                            <Text style={styles.infoCardLabel}>{t('about')}</Text>
-                            <Text style={styles.aboutText} numberOfLines={isDescriptionExpanded ? undefined : 3}>
-                                {result.description || `${result.itemName} is the flagship product of ${result.ownerCompany}...`}
-                            </Text>
-                            <TouchableOpacity onPress={toggleDescription}>
-                                <Text style={styles.readMoreText}>{isDescriptionExpanded ? t('show_less') : t('read_more')}</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* Reliability & Sources Accordion */}
-                        <TouchableOpacity style={styles.reliabilityAccordion} onPress={toggleValidation}>
-                            <View style={styles.reliabilityHeader}>
-                                <View style={styles.reliabilityIconBox}>
-                                    <Ionicons name="checkmark-circle-outline" size={20} color="#10B981" />
-                                </View>
-                                <View style={styles.reliabilityTextCol}>
-                                    <Text style={styles.reliabilityTitle}>{t('reliability')}</Text>
-                                    <Text style={styles.reliabilityValue}>{confidence}% {t('confidence')}</Text>
-                                </View>
-                                <Ionicons name={showValidation ? "chevron-up" : "chevron-down"} size={20} color="#94A3B8" />
-                            </View>
-
-                            {showValidation && (
-                                <View style={styles.reliabilityExpanded}>
-                                    <View style={styles.evidenceSection}>
-                                        <View style={styles.subHeaderSimple}>
-                                            <Ionicons name="checkmark-sharp" size={14} color="#94A3B8" />
-                                            <Text style={styles.subHeaderLabel}>{t('key_evidence')}</Text>
+                            {/* Middle row: Political & Made In */}
+                            <View style={styles.rowGrid}>
+                                {showPoliticalMeter && (
+                                    <View style={[styles.infoCard, { flex: 1 }]}>
+                                        <View style={styles.politicalHeader}>
+                                            <Ionicons name="scale-outline" size={14} color="#8B5CF6" />
+                                            <Text style={styles.politicalLabel}>{t('bipartisan')}</Text>
                                         </View>
-                                        <View style={styles.evidenceList}>
-                                            {result.keyEvidence?.map((ev, i) => (
-                                                <View key={i} style={styles.evidenceItem}>
-                                                    <View style={styles.greenDot} />
-                                                    <Text style={styles.evidencePoint}>
-                                                        {ev.point} <Text style={styles.evidenceConf}>({ev.confidence})</Text>
-                                                    </Text>
-                                                </View>
-                                            )) || (
-                                                    <View style={styles.evidenceItem}>
-                                                        <View style={styles.greenDot} />
-                                                        <Text style={styles.evidencePoint}>Ultimate parent is {result.ownerCompany}... <Text style={styles.evidenceConf}>(High)</Text></Text>
-                                                    </View>
-                                                )}
+                                        <View style={styles.politicalBarContainer}>
+                                            <View style={[styles.politicalGradient, { width: `${result.republicanScore || 50}%` }]} />
                                         </View>
                                     </View>
-
-                                    <View style={styles.sourcesSection}>
-                                        <View style={styles.subHeaderSimple}>
-                                            <Ionicons name="globe-outline" size={14} color="#94A3B8" />
-                                            <Text style={styles.subHeaderLabel}>{t('verified_sources')}</Text>
-                                        </View>
-                                        <View style={styles.sourcesBadges}>
-                                            <View style={styles.sourceBadge}>
-                                                <Text style={styles.sourceBadgeText}>[Own] {result.ownerCompany.toLowerCase().split(' ')[0]}...</Text>
-                                                <Ionicons name="open-outline" size={10} color="#10B981" />
-                                            </View>
-                                        </View>
-                                    </View>
-
-                                    <Text style={styles.aiVerificationText}>AI generated analysis verified against search results.</Text>
-                                </View>
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                )}
-
-                {activeTab === 'alternatives' && (
-                    <View style={styles.tabContent}>
-                        {result.alternatives?.length ? result.alternatives.map((alt, i) => (
-                            <View key={i} style={styles.infoCard}>
-                                <View style={styles.altHeader}>
-                                    <View>
-                                        <Text style={styles.altName}>{alt.name}</Text>
-                                        <Text style={styles.altCountry}>{alt.ownerCountryCode || 'US'}</Text>
-                                    </View>
-                                    <CountryFlag code={alt.ownerCountryCode || 'US'} style={styles.altFlag} />
-                                </View>
-                                <Text style={styles.altReason}>{alt.reason}</Text>
-                            </View>
-                        )) : (
-                            <View style={styles.emptyView}>
-                                <Ionicons name="sparkles" size={40} color="#E2E8F0" />
-                                <Text style={styles.emptyText}>{isFindingAlternatives ? t('searching_alts') : 'No alternatives found'}</Text>
-                                {!isFindingAlternatives && (
-                                    <TouchableOpacity style={styles.actionBtn} onPress={() => onFindAlternatives?.(result.id)}>
-                                        <Text style={styles.actionBtnText}>Find Alternatives</Text>
-                                    </TouchableOpacity>
                                 )}
-                            </View>
-                        )}
-                    </View>
-                )}
-
-                {activeTab === 'buying' && (
-                    <View style={styles.tabContent}>
-                        {result.shoppingOptions?.length ? result.shoppingOptions.map((opt, i) => (
-                            <View key={i} style={styles.infoCard}>
-                                <View style={styles.shoppingHeader}>
-                                    <Text style={styles.retailerName}>{opt.retailer}</Text>
-                                    <Text style={styles.optPrice}>{opt.price}</Text>
+                                <View style={[styles.infoCard, { flex: 1 }]}>
+                                    <Text style={styles.infoCardLabel}>{t('made_in')}</Text>
+                                    <View style={styles.madeInRow}>
+                                        <Ionicons name="globe-outline" size={16} color="#3B82F6" />
+                                        <Text style={styles.madeInText}>{result.manufacturedIn || t('multiple_countries')}</Text>
+                                    </View>
                                 </View>
-                                <TouchableOpacity style={styles.buyLink}>
-                                    <Text style={styles.buyLinkText}>View at {opt.retailer}</Text>
-                                    <Ionicons name="open-outline" size={14} color="#3B82F6" />
+                            </View>
+
+                            {/* About Card */}
+                            <View style={styles.infoCard}>
+                                <Text style={styles.infoCardLabel}>{t('about')}</Text>
+                                <Text style={styles.aboutText} numberOfLines={isDescriptionExpanded ? undefined : 3}>
+                                    {result.description || `${result.itemName} is the flagship product of ${result.ownerCompany}...`}
+                                </Text>
+                                <TouchableOpacity onPress={toggleDescription}>
+                                    <Text style={styles.readMoreText}>{isDescriptionExpanded ? t('show_less') : t('read_more')}</Text>
                                 </TouchableOpacity>
                             </View>
-                        )) : (
-                            <View style={styles.emptyView}>
-                                <Ionicons name="cart-outline" size={40} color="#E2E8F0" />
-                                <Text style={styles.emptyText}>{isFindingShoppingOptions ? 'Searching for prices...' : t('no_retailers')}</Text>
-                                {!isFindingShoppingOptions && (
-                                    <TouchableOpacity style={styles.actionBtn} onPress={() => onFindShoppingOptions?.(result.id)}>
-                                        <Text style={styles.actionBtnText}>Find Prices</Text>
-                                    </TouchableOpacity>
+
+                            {/* Reliability & Sources Accordion */}
+                            <TouchableOpacity style={styles.reliabilityAccordion} onPress={toggleValidation}>
+                                <View style={styles.reliabilityHeader}>
+                                    <View style={styles.reliabilityIconBox}>
+                                        <Ionicons name="checkmark-circle-outline" size={20} color="#10B981" />
+                                    </View>
+                                    <View style={styles.reliabilityTextCol}>
+                                        <Text style={styles.reliabilityTitle}>{t('reliability')}</Text>
+                                        <Text style={styles.reliabilityValue}>{confidence}% {t('confidence')}</Text>
+                                    </View>
+                                    <Ionicons name={showValidation ? "chevron-up" : "chevron-down"} size={20} color="#94A3B8" />
+                                </View>
+
+                                {showValidation && (
+                                    <View style={styles.reliabilityExpanded}>
+                                        <View style={styles.evidenceSection}>
+                                            <View style={styles.subHeaderSimple}>
+                                                <Ionicons name="checkmark-sharp" size={14} color="#94A3B8" />
+                                                <Text style={styles.subHeaderLabel}>{t('key_evidence')}</Text>
+                                            </View>
+                                            <View style={styles.evidenceList}>
+                                                {result.keyEvidence?.map((ev, i) => (
+                                                    <View key={i} style={styles.evidenceItem}>
+                                                        <View style={styles.greenDot} />
+                                                        <Text style={styles.evidencePoint}>
+                                                            {ev.point} <Text style={styles.evidenceConf}>({ev.confidence})</Text>
+                                                        </Text>
+                                                    </View>
+                                                )) || (
+                                                        <View style={styles.evidenceItem}>
+                                                            <View style={styles.greenDot} />
+                                                            <Text style={styles.evidencePoint}>Ultimate parent is {result.ownerCompany}... <Text style={styles.evidenceConf}>(High)</Text></Text>
+                                                        </View>
+                                                    )}
+                                            </View>
+                                        </View>
+
+                                        <View style={styles.sourcesSection}>
+                                            <View style={styles.subHeaderSimple}>
+                                                <Ionicons name="globe-outline" size={14} color="#94A3B8" />
+                                                <Text style={styles.subHeaderLabel}>{t('verified_sources')}</Text>
+                                            </View>
+                                            <View style={styles.sourcesBadges}>
+                                                <View style={styles.sourceBadge}>
+                                                    <Text style={styles.sourceBadgeText}>[Own] {result.ownerCompany.toLowerCase().split(' ')[0]}...</Text>
+                                                    <Ionicons name="open-outline" size={10} color="#10B981" />
+                                                </View>
+                                            </View>
+                                        </View>
+
+                                        <Text style={styles.aiVerificationText}>AI generated analysis verified against search results.</Text>
+                                    </View>
                                 )}
-                            </View>
-                        )}
-                    </View>
-                )}
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+
+                {
+                    activeTab === 'alternatives' && (
+                        <View style={styles.tabContent}>
+                            {result.alternatives?.length ? result.alternatives.map((alt, i) => (
+                                <View key={i} style={styles.infoCard}>
+                                    <View style={styles.altHeader}>
+                                        <View>
+                                            <Text style={styles.altName}>{alt.name}</Text>
+                                            <Text style={styles.altCountry}>{alt.ownerCountryCode || 'US'}</Text>
+                                        </View>
+                                        <CountryFlag code={alt.ownerCountryCode || 'US'} style={styles.altFlag} />
+                                    </View>
+                                    <Text style={styles.altReason}>{alt.reason}</Text>
+                                </View>
+                            )) : (
+                                <View style={styles.emptyView}>
+                                    <Ionicons name="sparkles" size={40} color="#E2E8F0" />
+                                    <Text style={styles.emptyText}>{isFindingAlternatives ? t('searching_alts') : 'No alternatives found'}</Text>
+                                    {!isFindingAlternatives && (
+                                        <TouchableOpacity style={styles.actionBtn} onPress={() => onFindAlternatives?.(result.id)}>
+                                            <Text style={styles.actionBtnText}>Find Alternatives</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                            )}
+                        </View>
+                    )
+                }
+
+                {
+                    activeTab === 'buying' && (
+                        <View style={styles.tabContent}>
+                            {result.shoppingOptions?.length ? result.shoppingOptions.map((opt, i) => (
+                                <View key={i} style={styles.infoCard}>
+                                    <View style={styles.shoppingHeader}>
+                                        <Text style={styles.retailerName}>{opt.retailer}</Text>
+                                        <Text style={styles.optPrice}>{opt.price}</Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.buyLink}>
+                                        <Text style={styles.buyLinkText}>View at {opt.retailer}</Text>
+                                        <Ionicons name="open-outline" size={14} color="#3B82F6" />
+                                    </TouchableOpacity>
+                                </View>
+                            )) : (
+                                <View style={styles.emptyView}>
+                                    <Ionicons name="cart-outline" size={40} color="#E2E8F0" />
+                                    <Text style={styles.emptyText}>{isFindingShoppingOptions ? 'Searching for prices...' : t('no_retailers')}</Text>
+                                    {!isFindingShoppingOptions && (
+                                        <TouchableOpacity style={styles.actionBtn} onPress={() => onFindShoppingOptions?.(result.id)}>
+                                            <Text style={styles.actionBtnText}>Find Prices</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                            )}
+                        </View>
+                    )
+                }
 
                 <View style={{ height: 120 }} />
-            </ScrollView>
-        </View>
+            </ScrollView >
+        </View >
     );
 };
 
