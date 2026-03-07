@@ -58,6 +58,9 @@ export function FeatureGateProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         if (!session?.user || (session.user as any).isAnonymous) {
             setSubscriptionData(null);
+            if (!session?.user) {
+                setOverridePlan(null);
+            }
             return;
         }
 

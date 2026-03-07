@@ -168,7 +168,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Welcome Back",
-    login_success: "Login successful",
     create_account: "Create Account",
     full_name: "Full Name",
     email: "Email Address",
@@ -240,7 +239,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Current plan",
     got_it: "Got it",
     redirecting_stripe: "Redirecting to Stripe...",
-    upgrade_btn_total: "Upgrade to Plus · {price}"
+    upgrade_btn_total: "Upgrade to Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Checking membership status...",
+    knowledge_base: "Knowledge Base",
+    search_strategies: "Search strategies...",
+    newest_first: "Newest First",
+    most_viewed: "Most Viewed",
+    alphabetical: "Alphabetical",
+    views: "Views",
+    back_to_kb: "Back to Knowledge Base",
+    expert_insights: "Expert Insights",
+    opening_type: "Opening {type}",
+    apply_strategy: "Apply this strategy today",
+    exclusive_strategies: "New member-exclusive strategies arrive every week.",
+    no_matches_found: "No matches found",
+    no_tips_matching: "We couldn't find any tips matching \"{search}\". Try a different keyword or check back later!",
+    anonymous: "Anonymous",
+    failed_init_donation: "Failed to initiate donation",
+    processing: "Processing"
   },
   da: {
     scan_btn: "Scan produktfoto",
@@ -403,7 +421,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Velkommen tilbage",
-    login_success: "Log ind lykkedes",
     create_account: "Opret Konto",
     full_name: "Fulde Navn",
     email: "Email Adresse",
@@ -475,7 +492,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Nuværende abonnement",
     got_it: "Forstået",
     redirecting_stripe: "Sender dig til Stripe...",
-    upgrade_btn_total: "Opgrader til Plus · {price}"
+    upgrade_btn_total: "Opgrader til Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Tjekker medlemsskabsstatus...",
+    knowledge_base: "Vidensbase",
+    search_strategies: "Søg i strategier...",
+    newest_first: "Nyeste først",
+    most_viewed: "Mest sete",
+    alphabetical: "Alfabetisk",
+    views: "Visninger",
+    back_to_kb: "Tilbage til vidensbasen",
+    expert_insights: "Ekspertindsigt",
+    opening_type: "Åbner {type}",
+    apply_strategy: "Anvend denne strategi i dag",
+    exclusive_strategies: "Nye medlems-eksklusive strategier ankommer hver uge.",
+    no_matches_found: "Ingen match fundet",
+    no_tips_matching: "Vi kunne ikke finde nogen tips, der matcher \"{search}\". Prøv et andet søgeord eller tjek igen senere!",
+    anonymous: "Anonym",
+    failed_init_donation: "Kunne ikke starte donation",
+    processing: "Behandler"
   },
   de: {
     // Scanner
@@ -639,7 +675,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Willkommen zurück",
-    login_success: "Anmeldung erfolgreich",
     create_account: "Konto erstellen",
     full_name: "Vollständiger Name",
     email: "E-Mail-Adresse",
@@ -711,7 +746,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Aktueller Plan",
     got_it: "Verstanden",
     redirecting_stripe: "Weiterleitung zu Stripe...",
-    upgrade_btn_total: "Upgrade auf Plus · {price}"
+    upgrade_btn_total: "Upgrade auf Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Mitgliedschaftsstatus wird geprüft...",
+    knowledge_base: "Wissensdatenbank",
+    search_strategies: "Strategien suchen...",
+    newest_first: "Neueste zuerst",
+    most_viewed: "Meistgesehen",
+    alphabetical: "Alphabetisch",
+    views: "Aufrufe",
+    back_to_kb: "Zurück zur Wissensdatenbank",
+    expert_insights: "Experten-Einblicke",
+    opening_type: "Öffne {type}",
+    apply_strategy: "Wenden Sie diese Strategie noch heute an",
+    exclusive_strategies: "Jede Woche erscheinen neue, exklusive Strategien für Mitglieder.",
+    no_matches_found: "Keine Treffer gefunden",
+    no_tips_matching: "Wir konnten keine Tipps finden, die mit \"{search}\" übereinstimmen. Versuchen Sie es mit einem anderen Stichwort oder schauen Sie später wieder vorbei!",
+    anonymous: "Anonym",
+    failed_init_donation: "Spende konnte nicht eingeleitet werden",
+    processing: "Verarbeitung"
   },
   es: {
     // Scanner
@@ -875,7 +929,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bienvenido de nuevo",
-    login_success: "Inicio de sesión exitoso",
     create_account: "Crear cuenta",
     full_name: "Nombre completo",
     email: "Correo electrónico",
@@ -947,7 +1000,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Plan actual",
     got_it: "Entendido",
     redirecting_stripe: "Redirigiendo a Stripe...",
-    upgrade_btn_total: "Mejorar a Plus · {price}"
+    upgrade_btn_total: "Mejorar a Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Comprobando el estado de la membresía...",
+    knowledge_base: "Base de conocimientos",
+    search_strategies: "Buscar estrategias...",
+    newest_first: "Lo más nuevo primero",
+    most_viewed: "Más visto",
+    alphabetical: "Alfabético",
+    views: "Vistas",
+    back_to_kb: "Volver a la base de conocimientos",
+    expert_insights: "Perspectivas de expertos",
+    opening_type: "Abriendo {type}",
+    apply_strategy: "Aplica esta estrategia hoy",
+    exclusive_strategies: "Cada semana llegan nuevas estrategias exclusivas para miembros.",
+    no_matches_found: "No se encontraron coincidencias",
+    no_tips_matching: "No pudimos encontrar ningún consejo que coincida con \"{search}\". ¡Intenta con otra palabra clave o vuelve más tarde!",
+    anonymous: "Anónimo",
+    failed_init_donation: "No se pudo iniciar la donación",
+    processing: "Procesando"
   },
   fr: {
     // Scanner
@@ -1111,7 +1183,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bon retour",
-    login_success: "Connexion réussie",
     create_account: "Créer un compte",
     full_name: "Nom complet",
     email: "Adresse e-mail",
@@ -1183,7 +1254,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Plan actuel",
     got_it: "Compris",
     redirecting_stripe: "Redirection vers Stripe...",
-    upgrade_btn_total: "Passer à Plus · {price}"
+    upgrade_btn_total: "Passer à Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Vérification du statut de membre...",
+    knowledge_base: "Base de connaissances",
+    search_strategies: "Rechercher des stratégies...",
+    newest_first: "Plus récent d'abord",
+    most_viewed: "Plus vu",
+    alphabetical: "Alphabétique",
+    views: "Vues",
+    back_to_kb: "Retour à la base de connaissances",
+    expert_insights: "Perspectives d'experts",
+    opening_type: "Ouverture de {type}",
+    apply_strategy: "Appliquez cette stratégie dès aujourd'hui",
+    exclusive_strategies: "De nouvelles stratégies exclusives aux membres arrivent chaque semaine.",
+    no_matches_found: "Aucune correspondance trouvée",
+    no_tips_matching: "Nous n'avons trouvé aucun conseil correspondant à \"{search}\". Essayez un autre mot-clé ou revenez plus tard !",
+    anonymous: "Anonyme",
+    failed_init_donation: "Échec de l'initialisation du don",
+    processing: "Traitement"
   },
   it: {
     // Scanner
@@ -1347,7 +1437,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bentornato",
-    login_success: "Accesso effettuato con successo",
     create_account: "Crea account",
     full_name: "Nome completo",
     email: "Indirizzo e-mail",
@@ -1419,7 +1508,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Piano attuale",
     got_it: "Ricevuto",
     redirecting_stripe: "Reindirizzamento a Stripe...",
-    upgrade_btn_total: "Passa a Plus · {price}"
+    upgrade_btn_total: "Passa a Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Verifica dello stato dell'abbonamento...",
+    knowledge_base: "Base di conoscenza",
+    search_strategies: "Cerca strategie...",
+    newest_first: "Più recenti",
+    most_viewed: "Più visti",
+    alphabetical: "Alfabetico",
+    views: "Visualizzazioni",
+    back_to_kb: "Torna alla base di conoscenza",
+    expert_insights: "Approfondimenti degli esperti",
+    opening_type: "Apertura {type}",
+    apply_strategy: "Applica questa strategia oggi",
+    exclusive_strategies: "Ogni settimana arrivano nuove strategie esclusive per i membri.",
+    no_matches_found: "Nessuna corrispondenza trovata",
+    no_tips_matching: "Non abbiamo trovato consigli che corrispondano a \"{search}\". Prova con un'altra parola chiave o torna più tardi!",
+    anonymous: "Anonimo",
+    failed_init_donation: "Impossibile avviare la donazione",
+    processing: "Elaborazione"
   },
   nl: {
     // Scanner
@@ -1583,7 +1691,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Welkom terug",
-    login_success: "Inloggen geslaagd",
     create_account: "Account aanmaken",
     full_name: "Volledige naam",
     email: "E-mailadres",
@@ -1655,7 +1762,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Huidig abonnement",
     got_it: "Begrepen",
     redirecting_stripe: "Doorsturen naar Stripe...",
-    upgrade_btn_total: "Upgraden naar Plus · {price}"
+    upgrade_btn_total: "Upgraden naar Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Lidmaatschapsstatus controleren...",
+    knowledge_base: "Kennisbank",
+    search_strategies: "Strategieën zoeken...",
+    newest_first: "Nieuwste eerst",
+    most_viewed: "Meest bekeken",
+    alphabetical: "Alfabetisch",
+    views: "Weergaven",
+    back_to_kb: "Terug naar kennisbank",
+    expert_insights: "Inzichten van experts",
+    opening_type: "Bezig met openen van {type}",
+    apply_strategy: "Pas deze strategie vandaag nog toe",
+    exclusive_strategies: "Elke week komen er nieuwe, exclusieve strategieën voor leden.",
+    no_matches_found: "Geen overeenkomsten gevonden",
+    no_tips_matching: "We konden geen tips vinden die overeenkomen met \"{search}\". Probeer een ander zoekwoord of kom later terug!",
+    anonymous: "Anoniem",
+    failed_init_donation: "Donatie starten mislukt",
+    processing: "Verwerking"
   },
   sv: {
     // Scanner
@@ -1819,7 +1945,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Välkommen tillbaka",
-    login_success: "Inloggningen lyckades",
     create_account: "Skapa konto",
     full_name: "Fullständigt namn",
     email: "E-postadress",
@@ -1891,7 +2016,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Nuvarande plan",
     got_it: "Uppfattat",
     redirecting_stripe: "Omdirigerar till Stripe...",
-    upgrade_btn_total: "Uppgradera till Plus · {price}"
+    upgrade_btn_total: "Uppgradera till Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Kontrollerar medlemskapsstatus...",
+    knowledge_base: "Kunskapsbas",
+    search_strategies: "Sök strategier...",
+    newest_first: "Nyast först",
+    most_viewed: "Mest visade",
+    alphabetical: "Alfabetisk",
+    views: "Visningar",
+    back_to_kb: "Tillbaka till kunskapsbasen",
+    expert_insights: "Expertinsikter",
+    opening_type: "Öppnar {type}",
+    apply_strategy: "Använd denna strategi idag",
+    exclusive_strategies: "Nya exklusiva strategier för medlemmar anländer varje vecka.",
+    no_matches_found: "Inga matchningar hittades",
+    no_tips_matching: "Vi kunde inte hitta några tips som matchar \"{search}\". Försök med ett annat sökord eller återkom senare!",
+    anonymous: "Anonym",
+    failed_init_donation: "Misslyckades med att initiera donation",
+    processing: "Bearbetar"
   },
   no: {
     // Scanner
@@ -2055,7 +2199,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Velkommen tilbake",
-    login_success: "Innlogging vellykket",
     create_account: "Opprett konto",
     full_name: "Fullt navn",
     email: "E-postadresse",
@@ -2127,7 +2270,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Nåværende abonnement",
     got_it: "Skjønner",
     redirecting_stripe: "Sender deg til Stripe...",
-    upgrade_btn_total: "Oppgrader til Plus · {price}"
+    upgrade_btn_total: "Oppgrader til Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Sjekker medlemskapstatus...",
+    knowledge_base: "Kunnskapsbase",
+    search_strategies: "Søk i strategier...",
+    newest_first: "Nyeste først",
+    most_viewed: "Mest sett",
+    alphabetical: "Alfabetisk",
+    views: "Visninger",
+    back_to_kb: "Tilbake til kunnskapsbasen",
+    expert_insights: "Ekspertinnsikt",
+    opening_type: "Åpner {type}",
+    apply_strategy: "Bruk denne strategien i dag",
+    exclusive_strategies: "Nye medlems-eksklusive strategier ankommer hver uge.",
+    no_matches_found: "Ingen treff funnet",
+    no_tips_matching: "Vi fant ingen tips som samsvarer med \"{search}\". Prøv et annet søkeord eller kom tilbake senere!",
+    anonymous: "Anonym",
+    failed_init_donation: "Kunne ikke starte donasjon",
+    processing: "Behandler"
   },
   pt: {
     // Scanner
@@ -2291,7 +2453,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Auth
     welcome_back: "Bem-vindo de Volta",
-    login_success: "Login efetuado com sucesso",
     create_account: "Criar Conta",
     full_name: "Nome Completo",
     email: "Endereço de E-mail",
@@ -2363,6 +2524,25 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Plano atual",
     got_it: "Entendido",
     redirecting_stripe: "A redirecionar para o Stripe...",
-    upgrade_btn_total: "Upgrade para Plus · {price}"
+    upgrade_btn_total: "Upgrade para Plus · {price}",
+
+    // Community / Tips / Donation Updates
+    checking_membership: "Verificando o status da assinatura...",
+    knowledge_base: "Base de Conhecimento",
+    search_strategies: "Pesquisar estratégias...",
+    newest_first: "Mais recentes primeiro",
+    most_viewed: "Mais visualizados",
+    alphabetical: "Alfabético",
+    views: "Visualizações",
+    back_to_kb: "Voltar para a Base de Conhecimento",
+    expert_insights: "Insights Especializados",
+    opening_type: "Abrindo {type}",
+    apply_strategy: "Aplique esta estratégia hoje",
+    exclusive_strategies: "Novas estratégias exclusivas para membros chegam todas as semanas.",
+    no_matches_found: "Nenhuma correspondência encontrada",
+    no_tips_matching: "Não conseguimos encontrar dicas que correspondam a \"{search}\". Tente uma palavra-chave diferente ou volte mais tarde!",
+    anonymous: "Anônimo",
+    failed_init_donation: "Falha ao iniciar doação",
+    processing: "Processando"
   },
 };

@@ -264,7 +264,7 @@ export async function uploadFile(file: { name: string; type: string; uri: string
 /**
  * Supporters / Donations API
  */
-export async function getSupporters(page: number = 1, pageSize: number = 5): Promise<{ supporters: any[]; total: number }> {
+export async function getSupporters(page: number = 1, pageSize: number = 10): Promise<{ supporters: any[]; total: number }> {
     return apiFetch<{ supporters: any[]; total: number }>(`/api/madeometer/db/supporters?page=${page}&pageSize=${pageSize}`);
 }
 
@@ -279,4 +279,29 @@ export async function createSupporter(data: {
         method: 'POST',
         body: JSON.stringify(data),
     });
+}
+
+/**
+ * Tips API
+ */
+export async function getTips(
+    search: string = '',
+    sortField: string = 'createdAt',
+    sortOrder: string = 'desc',
+    page: number = 1,
+    pageSize: number = 10
+): Promise<{ tips: any[]; total: number }> {
+    const query = new URLSearchParams({
+        isPublished: 'true',
+        search,
+        sortField,
+        sortOrder,
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+    });
+    return apiFetch<{ tips: any[]; total: number }>(`/api/tips?${query.toString()}`);
+}
+
+export async function getTipById(id: string): Promise<any> {
+    return apiFetch<any>(`/api/tips/${id}`);
 }

@@ -94,10 +94,6 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     loading_history: "Loading history...",
     search_history: "Search history...",
     load_more: "Load More",
-    no_history: "No history yet",
-    no_history_desc: "Scan your first item to start building your transparency log.",
-    items_found: "Items Found",
-    view_report: "View Full Analysis Report",
     no_results: "No results found",
     no_results_desc: "Try searching for something else",
 
@@ -159,12 +155,34 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     select_amount: "Select Amount",
     custom: "Custom",
     enter_amount: "Enter amount",
-    your_name: "Your Name (Optional)",
-    leave_comment: "Leave a short comment...",
+    your_name: "Your Name",
+    leave_comment: "Leave a comment (Optional)",
     pay: "Pay",
     with_card: "with Card",
-    secured_by: "Payments secured by",
+    secured_by: "Secured by",
     recent_supporters: "Recent Supporters",
+    anonymous: "Anonymous",
+    failed_init_donation: "Failed to initialize donation",
+    loading: "Loading",
+    no_history: "No history yet",
+    no_history_desc: "Help us keep transparency free for everyone. Your contributions directly fund our AI costs and data research.",
+    checking_membership: "Checking Membership Status",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Knowledge Base",
+    search_strategies: "Search strategies...",
+    newest_first: "Newest First",
+    most_viewed: "Most Viewed",
+    alphabetical: "Alphabetical",
+    views: "views",
+    opening_type: "Opening {type}...",
+    back_to_kb: "Back to Knowledge Base",
+    expert_insights: "Expert Insights",
+    apply_strategy: "Apply this Strategy",
+    exclusive_strategies: "Exclusive strategies from our research team.",
+    no_matches_found: "No matches found",
+    no_tips_matching: "No tips matching \"{search}\"",
+    ago: "ago",
 
     // Auth
     welcome_back: "Welcome Back",
@@ -241,7 +259,13 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     redirecting_stripe: "Redirecting to Stripe...",
     upgrade_btn_total: "Upgrade to Plus · {price}",
     bipartisan: "BIPARTISAN",
-    verdict_blacklisted: "Blacklisted"
+    verdict_blacklisted: "Blacklisted",
+    delete_scan_title: "Delete Scan",
+    delete_scan_message: "Are you sure you want to delete this scan?",
+    delete_failed: "Failed to delete scan.",
+    error_title: "Error",
+    analysis_failed: "Analysis failed",
+    please_try_again: "Please try again."
   },
   da: {
     scan_btn: "Scan produktfoto",
@@ -401,6 +425,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "med Kort",
     secured_by: "Betaling sikret af",
     recent_supporters: "Seneste støtter",
+    anonymous: "Anonym",
+    failed_init_donation: "Kunne ikke starte donation",
+    loading: "Indlæser",
+    checking_membership: "Tjekker medlemskabsstatus",
+    ago: "siden",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Vidensbase",
+    search_strategies: "Søgestrategier...",
+    newest_first: "Nyeste først",
+    most_viewed: "Mest viste",
+    alphabetical: "Alfabetisk",
+    views: "visninger",
+    opening_type: "Åbner {type}...",
+    back_to_kb: "Tilbage til Vidensbasen",
+    expert_insights: "Ekspertindsigt",
+    apply_strategy: "Anvend denne strategi",
+    exclusive_strategies: "Eksklusive strategier fra vores researchteam.",
+    no_matches_found: "Ingen matches fundet",
+    no_tips_matching: "Ingen tips matcher \"{search}\"",
 
     // Auth
     welcome_back: "Velkommen tilbage",
@@ -475,7 +519,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Nuværende abonnement",
     got_it: "Forstået",
     redirecting_stripe: "Sender dig til Stripe...",
-    upgrade_btn_total: "Opgrader til Plus · {price}"
+    upgrade_btn_total: "Opgrader til Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Sortlistet",
+    delete_scan_title: "Slet scanning",
+    delete_scan_message: "Er du sikker på, at du vil slette denne scanning?",
+    delete_failed: "Kunne ikke slette scanningen.",
+    error_title: "Fejl",
+    analysis_failed: "Analyse mislykkedes",
+    please_try_again: "Prøv venligst igen."
   },
   de: {
     // Scanner
@@ -640,6 +692,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "mit Karte",
     secured_by: "Zahlungen gesichert durch",
     recent_supporters: "Aktuelle Unterstützer",
+    anonymous: "Anonym",
+    failed_init_donation: "Spende konnte nicht initialisiert werden",
+    loading: "Wird geladen",
+    checking_membership: "Mitgliedschaftsstatus wird geprüft",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Wissensdatenbank",
+    search_strategies: "Suchstrategien...",
+    newest_first: "Neueste zuerst",
+    most_viewed: "Am häufigsten aufgerufen",
+    alphabetical: "Alphabetisch",
+    views: "Aufrufe",
+    opening_type: "{type} wird geöffnet...",
+    back_to_kb: "Zurück zur Wissensdatenbank",
+    expert_insights: "Experten-Einblicke",
+    apply_strategy: "Diese Strategie anwenden",
+    exclusive_strategies: "Exklusive Strategien von unserem Forschungsteam.",
+    no_matches_found: "Keine Treffer gefunden",
+    no_tips_matching: "Keine Tipps für \"{search}\" gefunden",
+    ago: "vor",
 
     // Auth
     welcome_back: "Willkommen zurück",
@@ -714,7 +786,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Aktueller Plan",
     got_it: "Verstanden",
     redirecting_stripe: "Weiterleitung zu Stripe...",
-    upgrade_btn_total: "Upgrade auf Plus · {price}"
+    upgrade_btn_total: "Upgrade auf Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Abgelehnt",
+    delete_scan_title: "Scan löschen",
+    delete_scan_message: "Sind Sie sicher, dass Sie diesen Scan löschen möchten?",
+    delete_failed: "Löschen des Scans fehlgeschlagen.",
+    error_title: "Fehler",
+    analysis_failed: "Analyse fehlgeschlagen",
+    please_try_again: "Bitte versuchen Sie es erneut."
   },
   es: {
     // Scanner
@@ -879,6 +959,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "con tarjeta",
     secured_by: "Pagos asegurados por",
     recent_supporters: "Colaboradores recientes",
+    anonymous: "Anónimo",
+    failed_init_donation: "Error al inicializar la donación",
+    loading: "Cargando",
+    checking_membership: "Comprobando estado de membresía",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Base de conocimientos",
+    search_strategies: "Estrategias de búsqueda...",
+    newest_first: "Más reciente primero",
+    most_viewed: "Más visto",
+    alphabetical: "Alfabético",
+    views: "vistas",
+    opening_type: "Abriendo {type}...",
+    back_to_kb: "Volver a la base de conocimientos",
+    expert_insights: "Perspectivas de expertos",
+    apply_strategy: "Aplicar esta estrategia",
+    exclusive_strategies: "Estrategias exclusivas de nuestro equipo de investigación.",
+    no_matches_found: "No se encontraron coincidencias",
+    no_tips_matching: "No hay consejos que coincidan con \"{search}\"",
+    ago: "hace",
 
     // Auth
     welcome_back: "Bienvenido de nuevo",
@@ -953,7 +1053,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Plan actual",
     got_it: "Entendido",
     redirecting_stripe: "Redirigiendo a Stripe...",
-    upgrade_btn_total: "Mejorar a Plus · {price}"
+    upgrade_btn_total: "Mejorar a Plus · {price}",
+    bipartisan: "BIPARTIDISTA",
+    verdict_blacklisted: "Lista negra",
+    delete_scan_title: "Eliminar escaneo",
+    delete_scan_message: "¿Está seguro de que desea eliminar este escaneo?",
+    delete_failed: "Error al eliminar el escaneo.",
+    error_title: "Error",
+    analysis_failed: "Falló el análisis",
+    please_try_again: "Por favor, inténtelo de nuevo."
   },
   fr: {
     // Scanner
@@ -1118,6 +1226,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "avec Carte",
     secured_by: "Paiements sécurisés par",
     recent_supporters: "Soutiens récents",
+    anonymous: "Anonyme",
+    failed_init_donation: "Échec de l'initialisation du don",
+    loading: "Chargement",
+    checking_membership: "Vérification du statut de membre",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Base de connaissances",
+    search_strategies: "Stratégies de recherche...",
+    newest_first: "Plus récent en premier",
+    most_viewed: "Le plus vu",
+    alphabetical: "Alphabétique",
+    views: "vues",
+    opening_type: "Ouverture de {type}...",
+    back_to_kb: "Retour à la base de connaissances",
+    expert_insights: "Avis d'experts",
+    apply_strategy: "Appliquer cette stratégie",
+    exclusive_strategies: "Stratégies exclusives de notre équipe de recherche.",
+    no_matches_found: "Aucun résultat trouvé",
+    no_tips_matching: "Aucun conseil correspondant à \"{search}\"",
+    ago: "il y a",
 
     // Auth
     welcome_back: "Bon retour",
@@ -1192,7 +1320,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Plan actuel",
     got_it: "Compris",
     redirecting_stripe: "Redirection vers Stripe...",
-    upgrade_btn_total: "Passer à Plus · {price}"
+    upgrade_btn_total: "Passer à Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Sur liste noire",
+    delete_scan_title: "Supprimer le scan",
+    delete_scan_message: "Êtes-vous sûr de vouloir supprimer ce scan ?",
+    delete_failed: "Échec de la suppression du scan.",
+    error_title: "Erreur",
+    analysis_failed: "Analyse échouée",
+    please_try_again: "Veuillez réessayer."
   },
   it: {
     // Scanner
@@ -1357,6 +1493,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "con Carta",
     secured_by: "Pagamenti sicuri da",
     recent_supporters: "Sostenitori recenti",
+    anonymous: "Anonimo",
+    failed_init_donation: "Inizializzazione della donazione fallita",
+    loading: "Caricamento",
+    checking_membership: "Controllo dello stato di appartenenza",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Base di conoscenza",
+    search_strategies: "Strategie di ricerca...",
+    newest_first: "Dal più recente",
+    most_viewed: "I più visti",
+    alphabetical: "In ordine alfabetico",
+    views: "visualizzazioni",
+    opening_type: "Apertura di {type}...",
+    back_to_kb: "Torna alla base di conoscenza",
+    expert_insights: "Approfondimenti degli esperti",
+    apply_strategy: "Applica questa strategia",
+    exclusive_strategies: "Strategie esclusive del nostro team di ricerca.",
+    no_matches_found: "Nessuna corrispondenza trovata",
+    no_tips_matching: "Nessun consiglio corrispondente a \"{search}\"",
+    ago: "fa",
 
     // Auth
     welcome_back: "Bentornato",
@@ -1431,7 +1587,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Piano attuale",
     got_it: "Ricevuto",
     redirecting_stripe: "Reindirizzamento a Stripe...",
-    upgrade_btn_total: "Passa a Plus · {price}"
+    upgrade_btn_total: "Passa a Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Lista nera",
+    delete_scan_title: "Elimina scansione",
+    delete_scan_message: "Sei sicuro di voler eliminare questa scansione?",
+    delete_failed: "Eliminazione della scansione fallita.",
+    error_title: "Errore",
+    analysis_failed: "Analisi fallita",
+    please_try_again: "Riprova."
   },
   nl: {
     // Scanner
@@ -1596,6 +1760,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "met kaart",
     secured_by: "Betalingen beveiligd door",
     recent_supporters: "Recente supporters",
+    anonymous: "Anoniem",
+    failed_init_donation: "Schenking kon niet worden geïnitialiseerd",
+    loading: "Laden",
+    checking_membership: "Lidmaatschapsstatus controleren",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Kennisbank",
+    search_strategies: "Zoekstrategieën...",
+    newest_first: "Nieuwste eerst",
+    most_viewed: "Meest bekeken",
+    alphabetical: "Alfabetisch",
+    views: "weergaven",
+    opening_type: "{type} openen...",
+    back_to_kb: "Terug naar kennisbank",
+    expert_insights: "Expertinzichten",
+    apply_strategy: "Pas deze strategie toe",
+    exclusive_strategies: "Exclusieve strategieën van ons onderzoeksteam.",
+    no_matches_found: "Geen overeenkomsten gevonden",
+    no_tips_matching: "Geen tips die overeenkomen met \"{search}\"",
+    ago: "geleden",
 
     // Auth
     welcome_back: "Welkom terug",
@@ -1670,7 +1854,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Huidig abonnement",
     got_it: "Begrepen",
     redirecting_stripe: "Doorsturen naar Stripe...",
-    upgrade_btn_total: "Upgraden naar Plus · {price}"
+    upgrade_btn_total: "Upgraden naar Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Zwarte lijst",
+    delete_scan_title: "Scan verwijderen",
+    delete_scan_message: "Weet je zeker dat je deze scan wilt verwijderen?",
+    delete_failed: "Verwijderen van scan mislukt.",
+    error_title: "Fout",
+    analysis_failed: "Analyse mislukt",
+    please_try_again: "Probeer het opnieuw."
   },
   sv: {
     // Scanner
@@ -1835,6 +2027,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "med kort",
     secured_by: "Betalningar säkrade av",
     recent_supporters: "Senaste supportrar",
+    anonymous: "Anonym",
+    failed_init_donation: "Misslyckades med att initiera donation",
+    loading: "Laddar",
+    checking_membership: "Kontrollerar medlemskapstatus",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Kunskapsbas",
+    search_strategies: "Sökstrategier...",
+    newest_first: "Nyaste först",
+    most_viewed: "Mest sedda",
+    alphabetical: "Alfabetisk",
+    views: "visningar",
+    opening_type: "Öppnar {type}...",
+    back_to_kb: "Tillbaka till kunskapsbasen",
+    expert_insights: "Expertinsikter",
+    apply_strategy: "Använd denna strategi",
+    exclusive_strategies: "Exklusiva strategier från vårt forskningsteam.",
+    no_matches_found: "Inga träffar hittades",
+    no_tips_matching: "Inga tips matchar \"{search}\"",
+    ago: "sedan",
 
     // Auth
     welcome_back: "Välkommen tillbaka",
@@ -1909,7 +2121,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Nuvarande plan",
     got_it: "Uppfattat",
     redirecting_stripe: "Omdirigerar till Stripe...",
-    upgrade_btn_total: "Uppgradera till Plus · {price}"
+    upgrade_btn_total: "Uppgradera till Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Svartlistad",
+    delete_scan_title: "Radera skanning",
+    delete_scan_message: "Är du säker på att du vill radera denna skanning?",
+    delete_failed: "Misslyckades med att radera skanning.",
+    error_title: "Fel",
+    analysis_failed: "Analysen misslyckades",
+    please_try_again: "Försök igen."
   },
   no: {
     // Scanner
@@ -2074,6 +2294,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "med kort",
     secured_by: "Betalinger sikret av",
     recent_supporters: "Nylige støttespillere",
+    anonymous: "Anonym",
+    failed_init_donation: "Kunne ikke starte donasjon",
+    loading: "Laster",
+    checking_membership: "Sjekker medlemskapstatus",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Kunnskapsbase",
+    search_strategies: "Søkestrategier...",
+    newest_first: "Nyeste først",
+    most_viewed: "Mest sette",
+    alphabetical: "Alfabetisk",
+    views: "visninger",
+    opening_type: "Åpner {type}...",
+    back_to_kb: "Tilbage til kunnskapsbasen",
+    expert_insights: "Ekspertinnsikt",
+    apply_strategy: "Bruk denne strategien",
+    exclusive_strategies: "Eksklusive strategier fra vårt forskningsteam.",
+    no_matches_found: "Ingen treff funnet",
+    no_tips_matching: "Ingen tips samsvarer med \"{search}\"",
+    ago: "siden",
 
     // Auth
     welcome_back: "Velkommen tilbake",
@@ -2148,7 +2388,15 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Nåværende abonnement",
     got_it: "Skjønner",
     redirecting_stripe: "Sender deg til Stripe...",
-    upgrade_btn_total: "Oppgrader til Plus · {price}"
+    upgrade_btn_total: "Oppgrader til Plus · {price}",
+    bipartisan: "BIPARTISAN",
+    verdict_blacklisted: "Svartelistet",
+    delete_scan_title: "Slett skanning",
+    delete_scan_message: "Er du sikker på at du vil slette denne skanningen?",
+    delete_failed: "Kunne ikke slette skanningen.",
+    error_title: "Feil",
+    analysis_failed: "Analyse mislyktes",
+    please_try_again: "Vennligst prøv igjen."
   },
   pt: {
     // Scanner
@@ -2313,6 +2561,26 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     with_card: "com Cartão",
     secured_by: "Pagamentos seguros por",
     recent_supporters: "Apoiadores Recentes",
+    anonymous: "Anônimo",
+    failed_init_donation: "Falha ao inicializar a doação",
+    loading: "Carregando",
+    checking_membership: "Verificando status de assinatura",
+
+    // Tips / Knowledge Base
+    knowledge_base: "Base de conhecimento",
+    search_strategies: "Estratégias de busca...",
+    newest_first: "Mais recente primeiro",
+    most_viewed: "Mais visto",
+    alphabetical: "Alfabético",
+    views: "visualizações",
+    opening_type: "Abrindo {type}...",
+    back_to_kb: "Voltar para base de conhecimento",
+    expert_insights: "Insights de especialistas",
+    apply_strategy: "Aplicar esta estratégia",
+    exclusive_strategies: "Estratégies exclusives da nossa equipe de pesquisa.",
+    no_matches_found: "Nenhuma correspondência encontrada",
+    no_tips_matching: "Nenhum conselho correspondente a \"{search}\"",
+    ago: "atrás",
 
     // Auth
     welcome_back: "Bem-vindo de Volta",
@@ -2387,6 +2655,14 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     current_plan: "Plano atual",
     got_it: "Entendido",
     redirecting_stripe: "A redirecionar para o Stripe...",
-    upgrade_btn_total: "Upgrade para Plus · {price}"
+    upgrade_btn_total: "Upgrade para Plus · {price}",
+    bipartisan: "BIPARTIDÁRIO",
+    verdict_blacklisted: "Lista negra",
+    delete_scan_title: "Excluir digitalização",
+    delete_scan_message: "Tem certeza de que deseja excluir esta digitalização?",
+    delete_failed: "Falha ao excluir digitalização.",
+    error_title: "Erro",
+    analysis_failed: "Análise falhou",
+    please_try_again: "Tente novamente."
   },
 };

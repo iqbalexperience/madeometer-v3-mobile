@@ -45,6 +45,7 @@ import HistoryList from '../components/HistoryList';
 import ProfileView from '../components/ProfileView';
 import Scanner from '../components/Scanner';
 import ScanResultCard from '../components/ScanResultCard';
+import { useCommunityData } from '../contexts/CommunityDataContext';
 import { useFeatureGate } from '../contexts/FeatureGateContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import {
@@ -63,6 +64,7 @@ export default function App() {
     const { data: session, isPending: isSessionPending } = useSession();
     const { t } = useLanguage();
     const { updatePlan } = useFeatureGate();
+    const { selectedTip, setSelectedTip } = useCommunityData();
 
     // State
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -257,6 +259,10 @@ export default function App() {
             }
 
             if (view === AppView.PROFILE || view === AppView.SUPPORT) {
+                if (view === AppView.SUPPORT && selectedTip) {
+                    setSelectedTip(null);
+                    return true;
+                }
                 setActiveTab('home');
                 setView(AppView.SCAN);
                 return true;
@@ -279,17 +285,17 @@ export default function App() {
         );
 
         return () => backHandler.remove();
-    }, [isAuthModalOpen, isEditingScan, isFeedbackOpen, isConfirmOpen, view, activeTab, currentResults.length]);
+    }, [isAuthModalOpen, isEditingScan, isFeedbackOpen, isConfirmOpen, view, activeTab, currentResults.length, selectedTip, setSelectedTip]);
 
     // Handlers
     const handleDeleteScan = async (id: string) => {
         Alert.alert(
-            "Delete Scan",
-            "Are you sure you want to delete this scan?",
+            t('delete_scan_title'),
+            t('delete_scan_message'),
             [
-                { text: "Cancel", style: "cancel" },
+                { text: t('cancel'), style: "cancel" },
                 {
-                    text: "Delete",
+                    text: t('delete'),
                     style: "destructive",
                     onPress: async () => {
                         try {
@@ -300,7 +306,7 @@ export default function App() {
                                 setView(AppView.SCAN);
                             }
                         } catch (error) {
-                            Alert.alert("Error", "Failed to delete scan.");
+                            Alert.alert(t('error_title'), t('delete_failed'));
                         }
                     }
                 }
@@ -410,7 +416,7 @@ export default function App() {
             })();
         } catch (error) {
             console.error(error);
-            Alert.alert("Analysis failed", "Please try again.");
+            Alert.alert(t('analysis_failed'), t('please_try_again'));
             setIsAnalyzing(false);
             setPreviewImage(null);
         }

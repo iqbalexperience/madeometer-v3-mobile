@@ -116,6 +116,4 @@ export enum AppView {
   HISTORY = 'HISTORY',
   CART = 'CART',
   COMMUNITY = 'COMMUNITY',
-  PROFILE = 'PROFILE',
-  SUPPORT = 'SUPPORT',
 }

@@ -205,7 +205,7 @@ const HistoryList: React.FC<HistoryListProps> = ({
                 <Ionicons name="search-outline" size={18} color="#94A3B8" />
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Search history..."
+                    placeholder={t('search_history')}
                     placeholderTextColor="#94A3B8"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
@@ -220,16 +220,16 @@ const HistoryList: React.FC<HistoryListProps> = ({
             {isLoading ? (
                 <View style={styles.centered}>
                     <ActivityIndicator size="large" color="#d35457" />
-                    <Text style={styles.loadingText}>{t('loading_history') || "Loading history..."}</Text>
+                    <Text style={styles.loadingText}>{t('loading_history')}</Text>
                 </View>
             ) : filteredHistory.length === 0 ? (
                 <View style={styles.centered}>
                     <Ionicons name="search" size={64} color="#E2E8F0" />
                     <Text style={styles.emptyTitle}>
-                        {searchQuery ? (t('no_results') || "No results found") : (t('no_history') || "No history yet")}
+                        {searchQuery ? t('no_results') : t('no_history')}
                     </Text>
                     <Text style={styles.emptyText}>
-                        {searchQuery ? (t('no_results_desc') || "Try searching for something else") : (t('no_history_desc') || "Your scan history will appear here")}
+                        {searchQuery ? t('no_results_desc') : t('no_history_desc')}
                     </Text>
                 </View>
             ) : (
@@ -245,7 +245,7 @@ const HistoryList: React.FC<HistoryListProps> = ({
                             style={styles.loadMoreBtn}
                         >
                             <Ionicons name="chevron-down" size={18} color="#64748B" />
-                            <Text style={styles.loadMoreText}>{t('load_more') || "LOAD MORE"}</Text>
+                            <Text style={styles.loadMoreText}>{t('load_more')}</Text>
                         </TouchableOpacity>
                     ) : (
                         <View style={{ height: 40 }} />

@@ -805,3 +805,111 @@ export const getAllUsers = async () => {
     const users = await prisma.user.findMany();
     return users.map(mapPrismaUserToProfile);
 };
+
+// --- Supporter Operations ---
+
+export const getSupporters = async (page: number = 1, pageSize: number = 10, status?: string, search?: string) => {
+    const skip = (page - 1) * pageSize;
+    const where: any = {};
+
+    if (status && status !== 'all') {
+        where.status = status;
+    }
+
+    if (search) {
+        where.OR = [
+            { name: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { comment: { contains: search, mode: 'insensitive' } }
+        ];
+    }
+
+    const [supporters, total] = await Promise.all([
+        prisma.supporter.findMany({
+            where,
+            skip,
+            take: pageSize,
+            orderBy: { createdAt: 'desc' },
+        }),
+        prisma.supporter.count({ where }),
+    ]);
+    return {
+        supporters: supporters.map(s => ({
+            id: s.id,
+            name: s.name,
+            email: s.email,
+            amount: s.amount,
+            currency: s.currency,
+            comment: s.comment || undefined,
+            status: s.status,
+            stripeTransactionId: s.stripeTransactionId || undefined,
+            createdAt: s.createdAt.getTime()
+        })),
+        total
+    };
+};
+
+export const saveSupporter = async (data: {
+    name: string;
+    email: string;
+    amount: number;
+    currency: string;
+    comment?: string;
+    stripeTransactionId?: string;
+    status?: string;
+}) => {
+    return await prisma.supporter.create({
+        data: {
+            ...data,
+            status: data.status || 'pending'
+        },
+    });
+};
+
+export const updateSupporterStatus = async (id: string, status: string, stripeTransactionId?: string) => {
+    return await prisma.supporter.update({
+        where: { id },
+        data: {
+            status,
+            ...(stripeTransactionId ? { stripeTransactionId } : {})
+        },
+    });
+};
+
+export const updateSupporter = async (id: string, data: Partial<{
+    name: string;
+    email: string;
+    amount: number;
+    currency: string;
+    comment: string | null;
+    status: string;
+}>) => {
+    return await prisma.supporter.update({
+        where: { id },
+        data,
+    });
+};
+
+export const deleteSupporter = async (id: string) => {
+    return await prisma.supporter.delete({
+        where: { id },
+    });
+};
+
+export const getSupporterAnalytics = async () => {
+    const [paidCount, totalRevenue, pendingCount] = await Promise.all([
+        prisma.supporter.count({ where: { status: 'paid' } }),
+        prisma.supporter.aggregate({
+            where: { status: 'paid' },
+            _sum: { amount: true }
+        }),
+        prisma.supporter.count({ where: { status: 'pending' } })
+    ]);
+
+    return {
+        paidCount,
+        totalRevenue: totalRevenue._sum.amount || 0,
+        pendingCount,
+        averageDonation: paidCount > 0 ? (totalRevenue._sum.amount || 0) / paidCount : 0
+    };
+};
